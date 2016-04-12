@@ -1,3 +1,9 @@
+[![Circle CI](https://circleci.com/gh/eggheadgames/android-in-app-payments.svg?style=svg)](https://circleci.com/gh/eggheadgames/android-in-app-payments)
+[![Release](https://jitpack.io/v/eggheadgames/android-in-app-payments.svg)](https://jitpack.io/#eggheadgames/android-in-app-payments)
+<a target="_blank" href="https://android-arsenal.com/api?level=15"><img src="https://img.shields.io/badge/API-15%2B-orange.svg"></a>
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/eggheadgames/android-in-app-payments/blob/master/LICENSE)
+
+
 # Android Payments
 
 ### Support both Google Play and Amazon Kindle Fire in-app purchase payments with a single API
