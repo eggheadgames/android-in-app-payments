@@ -34,3 +34,6 @@ captures/
 # IntelliJ project files
 *.iml
 .idea/
+
+# Misc: vi swap files
+*.swp

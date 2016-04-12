@@ -18,6 +18,13 @@ android {
         versionName "1.0.0"
     }
 
+    lintOptions {
+        warningsAsErrors true
+        // ok disables
+        disable 'GradleDependency'
+    }
+
+
 }
 
 dependencies {
