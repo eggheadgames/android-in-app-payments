@@ -17,7 +17,7 @@ A simple wrapper library that provides sample Google and Amazon in-app purchase 
  * actively maintained by [Egghead Games](http://eggheadgames.com) for their cross-platform mobile/tablet apps ([quality brain puzzles with no ads](https://play.google.com/store/apps/dev?id=8905223606155014113)!)
 
 ### Coming soon: 
- * subcription support
+ * subscription support
  
 ### Not supported:
   * receipt validation (either local or server)
