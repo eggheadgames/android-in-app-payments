@@ -1,8 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.eggheadgames.inapppayments">
-
-    <application android:allowBackup="true">
-
-    </application>
-
-</manifest>
+<manifest package="com.eggheadgames.inapppayments"/>
