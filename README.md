@@ -21,9 +21,10 @@ A simple wrapper library that provides sample Google and Amazon in-app purchase 
  * [Amazon IAP v2](https://developer.amazon.com/appsandservices/apis/earn/in-app-purchasing)
  * fetch localised prices
  * actively maintained by [Egghead Games](http://eggheadgames.com) for their cross-platform mobile/tablet apps ([quality brain puzzles with no ads](https://play.google.com/store/apps/dev?id=8905223606155014113)!)
+ * subscriptions for Google Play
 
 ### Coming soon: 
- * subscription support
+ * subscriptions for Amazon
  
 ### Not supported:
   * receipt validation (either local or server)
@@ -57,9 +58,9 @@ dependencies {
 
 ## Example
 ### Setup
-The following code snippet initializes billing module:
+The following code snippet initializes the billing module:
 
-```
+```java
     IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, skuList /*can be ignored for Google traget*/);
     IAPManager.addListener(new BillingServiceListener() {
             @Override
@@ -68,9 +69,23 @@ The following code snippet initializes billing module:
             }
             
             @Override
-            public void onProductOwned(String sku) {
-                // will be triggered whenever purchase succeded 
-                // OR upon fetching owned products using IAPManager.init();
+            public void onProductPurchased(String sku) {
+                // will be triggered whenever purchase succeeded 
+            }
+
+            @Override
+            public void onProductRestored(String sku) {
+                // will be triggered fetching owned products using IAPManager.init();
+            }
+
+            @Override
+            public void onSubscriptionRestored(String sku) {
+                // will be triggered for already subscribed products
+            }
+
+            @Override
+            public void onSubscriptionPurchased(String sku) {
+                // will be triggered for a new subscription
             }
         });
     IAPManager.init(googleIapKey /*can be ignored for Amazon target*/);
@@ -97,10 +112,24 @@ To buy a product use the following method:
 ```
 IAPManager.buy(Activity activity, String sku, int requestCode);
 ```
+`BillingServiceListener` will notify application about the operation result
+
+### Subscriptions
+
+To start a subscription use the following method:
+
+```
+IAPManager.subscribe(Activity activity, String sku, int requestCode);
+```
 
 `String sku` - a product to buy
 `int requestCode` - a unique request code to be used to deliver result through `onActivityResult`
 
-Please make sure, that `activity` that you are passing to the method extends `IAPActivity`
 
-`BillingServiceListener` will notify application about the operation result
+Add explanation and suggestion calls for this:
+```
+        // subscription in Google is cannot be cancelled within the app -
+        // it can only be cancelled from Google Play application which means that our application is not aware of this event,
+        // so we can't update the database correctly, thus we have to unsubscribe here and check is there's a subscription available
+        // it was the simplest way to integrate subscription, but it needs to be improved
+```
