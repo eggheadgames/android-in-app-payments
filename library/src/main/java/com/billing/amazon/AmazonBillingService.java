@@ -37,6 +37,16 @@ public class AmazonBillingService extends BillingService {
     }
 
     @Override
+    public void subscribe(Activity activity, String sku, int id) {
+        //TODO: implement subscription
+    }
+
+    @Override
+    public void unsubscribe(Activity activity, String sku, int id) {
+        //TODO
+    }
+
+    @Override
     public void close() {
     }
 }

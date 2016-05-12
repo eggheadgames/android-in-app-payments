@@ -12,10 +12,31 @@ public interface BillingServiceListener {
     void onPricesUpdated(Map<String, String> iapKeyPrices);
 
     /**
-     * Callback will be triggered when a product purchased successfully,
-     * OR upon owned products restore
+     * Callback will be triggered when a product purchased successfully
      *
      * @param sku - specificator of owned product
      */
-    void onProductOwned(String sku);
+    void onProductPurchased(String sku);
+
+    /**
+     * Callback will be triggered upon owned products restore
+     *
+     * @param sku - specificator of owned product
+     */
+    void onProductRestored(String sku);
+
+    /**
+     * Callback will be triggered upon owned subscription restore
+     *
+     * @param sku - specificator of owned subscription
+     */
+    void onSubscriptionRestored(String sku);
+
+    /**
+     * Callback will be triggered when a subscription purchased successfully
+     *
+     * @param sku - specificator of purchased subscription
+     */
+    void onSubscriptionPurchased(String sku);
+
 }

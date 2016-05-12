@@ -3,6 +3,7 @@ package com.billing.google;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.android.vending.billing.IabHelper;
 import com.billing.BillingService;
@@ -61,6 +62,29 @@ public class GoogleBillingService extends BillingService {
                 iap.launchPurchaseFlow(activity, sku, id, googleBillingListener);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void subscribe(Activity activity, String sku, int id) {
+        try {
+            if (iap != null)
+                iap.launchSubscriptionPurchaseFlow(activity, sku, id, googleBillingListener);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void unsubscribe(Activity activity, String sku, int id) {
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://play.google.com/store/account"));
+            activity.startActivity(intent);
+            activity.finish();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

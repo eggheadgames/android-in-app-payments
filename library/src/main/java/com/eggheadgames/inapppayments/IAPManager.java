@@ -43,6 +43,14 @@ public class IAPManager {
         billingService.buy(activity, sku, id);
     }
 
+    public static void subscribe(Activity activity, String sku, int id) {
+        billingService.subscribe(activity, sku, id);
+    }
+
+    public static void unsubscribe(Activity activity, String sku, int id) {
+        billingService.unsubscribe(activity, sku, id);
+    }
+
     public static void destroy() {
         billingService.close();
     }

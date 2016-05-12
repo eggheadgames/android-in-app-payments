@@ -4,6 +4,7 @@ import com.android.vending.billing.IabHelper;
 import com.android.vending.billing.IabResult;
 import com.android.vending.billing.Inventory;
 import com.android.vending.billing.Purchase;
+import com.android.vending.billing.SkuDetails;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +30,11 @@ public class GoogleBillingListener implements IabHelper.OnIabSetupFinishedListen
             if (result != null && info != null && result.isSuccess()) {
                 //We assume that any problems will have become obvious through the Play store, so no need to do anything
                 //if the purchase has failed.
-                //If it's successful, just turn on the new puzzle pack!
-                HashMap<String, Object> params = new HashMap<>();
-                params.put("sku", info.getSku());
-                googleBillingService.productOwned(info.getSku());
+                if (info.getItemType().equals(IabHelper.ITEM_TYPE_INAPP)) {
+                    googleBillingService.productOwned(info.getSku(), false);
+                } else {
+                    googleBillingService.subscriptionOwned(info.getSku(), false);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -59,7 +61,13 @@ public class GoogleBillingListener implements IabHelper.OnIabSetupFinishedListen
                 ArrayList<String> owned = (ArrayList<String>) inv.getAllOwnedSkus();
                 for (int i = 0; i < owned.size(); i++) {
                     //The customer owns this product. Update the local data to reflect that if necessary.
-                    googleBillingService.productOwned(owned.get(i));
+                    String sku = owned.get(i);
+                    SkuDetails skuDetails = inv.getSkuDetails(sku);
+                    if (skuDetails != null && skuDetails.getType().equals(IabHelper.ITEM_TYPE_SUBS)) {
+                        googleBillingService.subscriptionOwned(sku, true);
+                    } else {
+                        googleBillingService.productOwned(sku, true);
+                    }
                 }
 
                 Thread thread = new Thread(new Runnable() {

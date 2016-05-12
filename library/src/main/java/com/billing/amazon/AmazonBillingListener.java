@@ -74,7 +74,7 @@ class AmazonBillingListener implements PurchasingListener {
                     Log.d(TAG, "onPurchaseResponse: receipt json:" + receipt.toJSON());
                     Log.d(TAG, "onPurchaseResponse: getUserId:" + response.getUserData().getUserId());
                     Log.d(TAG, "onPurchaseResponse: getMarketplace:" + response.getUserData().getMarketplace());
-                    amazonBillingService.productOwned(receipt.getSku());
+                    amazonBillingService.productOwned(receipt.getSku(), false);
                     PurchasingService.notifyFulfillment(receipt.getReceiptId(), FulfillmentResult.FULFILLED);
                 }
                 break;
@@ -82,7 +82,7 @@ class AmazonBillingListener implements PurchasingListener {
                 Log.i(TAG, "onPurchaseResponse: already purchased, you should verify the entitlement purchase on your side and make sure the purchase was granted to customer");
                 receipt = response.getReceipt();
                 if (receipt != null) {
-                    amazonBillingService.productOwned(receipt.getSku());
+                    amazonBillingService.productOwned(receipt.getSku(), true);
                 }
                 break;
             case INVALID_SKU:
@@ -105,7 +105,7 @@ class AmazonBillingListener implements PurchasingListener {
             Receipt[] receipts = response.getReceipts().toArray(new Receipt[0]);
             for (Receipt receipt : receipts) {
                 if (receipt.getProductType() == ProductType.ENTITLED) {
-                    amazonBillingService.productOwned(receipt.getSku());
+                    amazonBillingService.productOwned(receipt.getSku(), true);
                     Log.d(TAG, "onPurchaseUpdatesResponse productOwned: " + receipt.getSku());
                 }
             }

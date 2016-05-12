@@ -30,10 +30,10 @@ public class BillingTest {
         BillingServiceListener secondListener = Mockito.spy(BillingServiceListener.class);
         IAPManager.addListener(secondListener);
 
-        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU);
+        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, false);
 
-        Mockito.verify(firstListener, Mockito.times(1)).onProductOwned(TestConstants.TEST_SKU);
-        Mockito.verify(secondListener, Mockito.times(1)).onProductOwned(TestConstants.TEST_SKU);
+        Mockito.verify(firstListener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
+        Mockito.verify(secondListener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
     }
 
     @Test
@@ -68,10 +68,59 @@ public class BillingTest {
 
         IAPManager.removeListener(firstListener);
 
-        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU);
+        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, false);
 
-        Mockito.verify(firstListener, Mockito.never()).onProductOwned(Mockito.anyString());
-        Mockito.verify(secondListener, Mockito.times(1)).onProductOwned(TestConstants.TEST_SKU);
+        Mockito.verify(firstListener, Mockito.never()).onProductPurchased(Mockito.anyString());
+        Mockito.verify(secondListener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
 
     }
+
+    @Test
+    public void onProductPurchase_purchaseCallbackShouldBeTriggered() {
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+
+        BillingServiceListener listener = Mockito.spy(BillingServiceListener.class);
+        IAPManager.addListener(listener);
+
+        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, false);
+
+        Mockito.verify(listener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
+    }
+
+    @Test
+    public void onProductRestore_restoreCallbackShouldBeTriggered() {
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+
+        BillingServiceListener listener = Mockito.spy(BillingServiceListener.class);
+        IAPManager.addListener(listener);
+
+        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, true);
+
+        Mockito.verify(listener, Mockito.times(1)).onProductRestored(TestConstants.TEST_SKU);
+    }
+
+    @Test
+    public void onSubscriptionPurchase_purchaseCallbackShouldBeTriggered() {
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+
+        BillingServiceListener listener = Mockito.spy(BillingServiceListener.class);
+        IAPManager.addListener(listener);
+
+        IAPManager.getBillingService().subscriptionOwned(TestConstants.TEST_SKU, false);
+
+        Mockito.verify(listener, Mockito.times(1)).onSubscriptionPurchased(TestConstants.TEST_SKU);
+    }
+
+    @Test
+    public void onSubscriptionRestore_restoreCallbackShouldBeTriggered() {
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+
+        BillingServiceListener listener = Mockito.spy(BillingServiceListener.class);
+        IAPManager.addListener(listener);
+
+        IAPManager.getBillingService().subscriptionOwned(TestConstants.TEST_SKU, true);
+
+        Mockito.verify(listener, Mockito.times(1)).onSubscriptionRestored(TestConstants.TEST_SKU);
+    }
+
 }
