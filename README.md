@@ -122,14 +122,20 @@ To start a subscription use the following method:
 IAPManager.subscribe(Activity activity, String sku, int requestCode);
 ```
 
-`String sku` - a product to buy
+`String sku` - a subscription ID
 `int requestCode` - a unique request code to be used to deliver result through `onActivityResult`
+`BillingServiceListener.onSubscriptionPurchased()` will notify application about successful operation result
 
+Use the following method to remove subscription 
 
-Add explanation and suggestion calls for this:
 ```
-        // subscription in Google is cannot be cancelled within the app -
-        // it can only be cancelled from Google Play application which means that our application is not aware of this event,
-        // so we can't update the database correctly, thus we have to unsubscribe here and check is there's a subscription available
-        // it was the simplest way to integrate subscription, but it needs to be improved
+IAPManager.unsubscribe(Activity activity, String sku, int requestCode);
 ```
+
+Please keep in mind that for Google In App Billing it will just lead user to the Google Pay Account Settings page where user may cancel subscription manually.
+
+#### Note
+
+When you are integrating Google In App Billing Subscriptions into your application please pay attention for the subscription cancellation handling.
+As long as currently subscription can be cancelled only through Google Play Account settings - application won't be notified about this event.
+Thus you have to query for the owned subscriptions each time you open the application (if needed), which is done via `IAPManager.init()` method.
