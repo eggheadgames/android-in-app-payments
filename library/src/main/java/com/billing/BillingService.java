@@ -3,7 +3,6 @@ package com.billing;
 import android.app.Activity;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 public abstract class BillingService {
@@ -28,9 +27,7 @@ public abstract class BillingService {
      * @param isRestore - a flag indicating whether it's a fresh purchase or restored product
      */
     public void productOwned(String sku, boolean isRestore) {
-        Iterator<BillingServiceListener> iterator = billingServiceListeners.iterator();
-        while (iterator.hasNext()) {
-            BillingServiceListener billingServiceListener = iterator.next();
+        for (BillingServiceListener billingServiceListener : billingServiceListeners) {
             if (isRestore) {
                 billingServiceListener.onProductRestored(sku);
             } else {
@@ -44,9 +41,7 @@ public abstract class BillingService {
      * @param isRestore - a flag indicating whether it's a fresh purchase or restored subscription
      */
     public void subscriptionOwned(String sku, boolean isRestore) {
-        Iterator<BillingServiceListener> iterator = billingServiceListeners.iterator();
-        while (iterator.hasNext()) {
-            BillingServiceListener billingServiceListener = iterator.next();
+        for (BillingServiceListener billingServiceListener : billingServiceListeners) {
             if (isRestore) {
                 billingServiceListener.onSubscriptionRestored(sku);
             } else {
@@ -56,9 +51,7 @@ public abstract class BillingService {
     }
 
     public void updatePrices(Map<String, String> iapkeyPrices) {
-        Iterator<BillingServiceListener> iterator = billingServiceListeners.iterator();
-        while (iterator.hasNext()) {
-            BillingServiceListener billingServiceListener = iterator.next();
+        for (BillingServiceListener billingServiceListener : billingServiceListeners) {
             billingServiceListener.onPricesUpdated(iapkeyPrices);
         }
     }
