@@ -2,6 +2,8 @@ package com.billing.amazon;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 
 import com.amazon.device.iap.PurchasingService;
 import com.billing.BillingService;
@@ -25,7 +27,7 @@ public class AmazonBillingService extends BillingService {
         AmazonBillingListener amazonBillingListener = new AmazonBillingListener(this);
         PurchasingService.registerListener(context, amazonBillingListener);
 
-        final Set<String> productSkus = new HashSet<String>(iapkeys);
+        final Set<String> productSkus = new HashSet<>(iapkeys);
         PurchasingService.getProductData(productSkus);
 
         PurchasingService.getPurchaseUpdates(false);
@@ -38,12 +40,20 @@ public class AmazonBillingService extends BillingService {
 
     @Override
     public void subscribe(Activity activity, String sku, int id) {
-        //TODO: implement subscription
+        PurchasingService.purchase(sku);
     }
 
     @Override
     public void unsubscribe(Activity activity, String sku, int id) {
-        //TODO
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.amazon.com/gp/mas/your-account/myapps/yoursubscriptions/ref=mas_ya_subs"));
+            activity.startActivity(intent);
+            activity.finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
