@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.billing.BillingService;
-import com.billing.BillingServiceListener;
+import com.billing.PurchaseServiceListener;
+import com.billing.SubscriptionServiceListener;
 import com.billing.amazon.AmazonBillingService;
 import com.billing.google.GoogleBillingService;
 
@@ -31,12 +32,20 @@ public class IAPManager {
         billingService.init(key);
     }
 
-    public static void addListener(BillingServiceListener billingServiceListener) {
-        billingService.addListener(billingServiceListener);
+    public static void addPurchaseListener(PurchaseServiceListener purchaseServiceListener) {
+        billingService.addPurchaseListener(purchaseServiceListener);
     }
 
-    public static void removeListener(BillingServiceListener billingServiceListener) {
-        billingService.removeListener(billingServiceListener);
+    public static void removePurchaseListener(PurchaseServiceListener purchaseServiceListener) {
+        billingService.removePurchaseListener(purchaseServiceListener);
+    }
+
+    public static void addSubscriptionListener(SubscriptionServiceListener subscriptionServiceListener) {
+        billingService.addSubscriptionListener(subscriptionServiceListener);
+    }
+
+    public static void removeSubscriptionListener(SubscriptionServiceListener subscriptionServiceListener) {
+        billingService.removeSubscriptionListener(subscriptionServiceListener);
     }
 
     public static void buy(Activity activity, String sku, int id) {

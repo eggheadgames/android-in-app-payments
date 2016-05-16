@@ -3,23 +3,34 @@ package com.billing;
 import android.app.Activity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class BillingService {
 
-    private ArrayList<BillingServiceListener> billingServiceListeners;
+    private List<PurchaseServiceListener> purchaseServiceListeners;
+    private List<SubscriptionServiceListener> subscriptionServiceListeners;
 
     @SuppressWarnings("WeakerAccess")
     public BillingService() {
-        billingServiceListeners = new ArrayList<>();
+        purchaseServiceListeners = new ArrayList<>();
+        subscriptionServiceListeners = new ArrayList<>();
     }
 
-    public void addListener(BillingServiceListener billingServiceListener) {
-        billingServiceListeners.add(billingServiceListener);
+    public void addPurchaseListener(PurchaseServiceListener purchaseServiceListener) {
+        purchaseServiceListeners.add(purchaseServiceListener);
     }
 
-    public void removeListener(BillingServiceListener billingServiceListener) {
-        billingServiceListeners.remove(billingServiceListener);
+    public void removePurchaseListener(PurchaseServiceListener purchaseServiceListener) {
+        purchaseServiceListeners.remove(purchaseServiceListener);
+    }
+
+    public void addSubscriptionListener(SubscriptionServiceListener subscriptionServiceListener) {
+        subscriptionServiceListeners.add(subscriptionServiceListener);
+    }
+
+    public void removeSubscriptionListener(SubscriptionServiceListener subscriptionServiceListener) {
+        subscriptionServiceListeners.remove(subscriptionServiceListener);
     }
 
     /**
@@ -27,11 +38,11 @@ public abstract class BillingService {
      * @param isRestore - a flag indicating whether it's a fresh purchase or restored product
      */
     public void productOwned(String sku, boolean isRestore) {
-        for (BillingServiceListener billingServiceListener : billingServiceListeners) {
+        for (PurchaseServiceListener purchaseServiceListener : purchaseServiceListeners) {
             if (isRestore) {
-                billingServiceListener.onProductRestored(sku);
+                purchaseServiceListener.onProductRestored(sku);
             } else {
-                billingServiceListener.onProductPurchased(sku);
+                purchaseServiceListener.onProductPurchased(sku);
             }
         }
     }
@@ -41,17 +52,17 @@ public abstract class BillingService {
      * @param isRestore - a flag indicating whether it's a fresh purchase or restored subscription
      */
     public void subscriptionOwned(String sku, boolean isRestore) {
-        for (BillingServiceListener billingServiceListener : billingServiceListeners) {
+        for (SubscriptionServiceListener subscriptionServiceListener : subscriptionServiceListeners) {
             if (isRestore) {
-                billingServiceListener.onSubscriptionRestored(sku);
+                subscriptionServiceListener.onSubscriptionRestored(sku);
             } else {
-                billingServiceListener.onSubscriptionPurchased(sku);
+                subscriptionServiceListener.onSubscriptionPurchased(sku);
             }
         }
     }
 
     public void updatePrices(Map<String, String> iapkeyPrices) {
-        for (BillingServiceListener billingServiceListener : billingServiceListeners) {
+        for (BillingServiceListener billingServiceListener : purchaseServiceListeners) {
             billingServiceListener.onPricesUpdated(iapkeyPrices);
         }
     }
