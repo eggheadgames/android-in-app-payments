@@ -117,6 +117,9 @@ class AmazonBillingListener implements PurchasingListener {
                 if (receipt.getProductType() == ProductType.ENTITLED) {
                     amazonBillingService.productOwned(receipt.getSku(), true);
                     Log.d(TAG, "onPurchaseUpdatesResponse productOwned: " + receipt.getSku());
+                } else if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
+                    amazonBillingService.subscriptionOwned(receipt.getSku(), true);
+                    Log.d(TAG, "onPurchaseUpdatesResponse subscriptionOwned: " + receipt.getSku());
                 }
             }
         }

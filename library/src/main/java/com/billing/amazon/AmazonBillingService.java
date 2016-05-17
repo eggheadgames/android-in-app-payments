@@ -30,7 +30,7 @@ public class AmazonBillingService extends BillingService {
         final Set<String> productSkus = new HashSet<>(iapkeys);
         PurchasingService.getProductData(productSkus);
 
-        PurchasingService.getPurchaseUpdates(false);
+        PurchasingService.getPurchaseUpdates(true);
     }
 
     @Override
