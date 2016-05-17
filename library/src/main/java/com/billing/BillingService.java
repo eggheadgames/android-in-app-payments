@@ -65,6 +65,10 @@ public abstract class BillingService {
         for (BillingServiceListener billingServiceListener : purchaseServiceListeners) {
             billingServiceListener.onPricesUpdated(iapkeyPrices);
         }
+
+        for (BillingServiceListener billingServiceListener : subscriptionServiceListeners) {
+            billingServiceListener.onPricesUpdated(iapkeyPrices);
+        }
     }
 
     public abstract void init(String key);

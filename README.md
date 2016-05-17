@@ -22,8 +22,6 @@ A simple wrapper library that provides sample Google and Amazon in-app purchase 
  * fetch localised prices
  * actively maintained by [Egghead Games](http://eggheadgames.com) for their cross-platform mobile/tablet apps ([quality brain puzzles with no ads](https://play.google.com/store/apps/dev?id=8905223606155014113)!)
  * subscriptions for Google Play
-
-### Coming soon: 
  * subscriptions for Amazon
  
 ### Not supported:
@@ -62,7 +60,7 @@ The following code snippet initializes the billing module:
 
 ```java
     IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, skuList /*can be ignored for Google traget*/);
-    IAPManager.addListener(new BillingServiceListener() {
+    IAPManager.addPurchaseListener(new PurchaseServiceListener() {
             @Override
             public void onPricesUpdated(Map<String, String> map) {
                 // list of available products will be received here, so you can update UI with prices if needed
@@ -77,17 +75,7 @@ The following code snippet initializes the billing module:
             public void onProductRestored(String sku) {
                 // will be triggered fetching owned products using IAPManager.init();
             }
-
-            @Override
-            public void onSubscriptionRestored(String sku) {
-                // will be triggered for already subscribed products
-            }
-
-            @Override
-            public void onSubscriptionPurchased(String sku) {
-                // will be triggered for a new subscription
-            }
-        });
+    });
     IAPManager.init(googleIapKey /*can be ignored for Amazon target*/);
 ```
 
@@ -112,10 +100,29 @@ To buy a product use the following method:
 ```
 IAPManager.buy(Activity activity, String sku, int requestCode);
 ```
-`BillingServiceListener` will notify application about the operation result
+`PurchaseServiceListener` will notify application about the operation result
 
 ### Subscriptions
+The following listener can be used to obtain owned subscriptions and to get notification about subscription operation result
 
+```java
+    IAPManager.addSubscriptionListener(new SubscriptionServiceListener() {
+        @Override
+        public void onSubscriptionRestored(String s) {
+            // will be triggered upon fetching owned subscription using IAPManager.init();
+        }
+
+        @Override
+        public void onSubscriptionPurchased(String s) {
+            // will be triggered whenever subscription succeeded
+        }
+
+        @Override
+        public void onPricesUpdated(Map<String, String> map) {
+            // list of available products will be received here, so you can update UI with prices if needed            
+        }
+    });
+```
 To start a subscription use the following method:
 
 ```
@@ -124,7 +131,7 @@ IAPManager.subscribe(Activity activity, String sku, int requestCode);
 
 `String sku` - a subscription ID
 `int requestCode` - a unique request code to be used to deliver result through `onActivityResult`
-`BillingServiceListener.onSubscriptionPurchased()` will notify application about successful operation result
+`SubscriptionServiceListener.onSubscriptionPurchased()` will notify application about successful operation result
 
 Use the following method to remove subscription 
 
