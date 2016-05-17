@@ -87,7 +87,7 @@ class AmazonBillingListener implements PurchasingListener {
             case ALREADY_PURCHASED:
                 Log.i(TAG, "onPurchaseResponse: already purchased, you should verify the entitlement purchase on your side and make sure the purchase was granted to customer");
                 receipt = response.getReceipt();
-                if (receipt != null) {
+                if (receipt != null && !receipt.isCanceled()) {
                     if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
                         amazonBillingService.subscriptionOwned(receipt.getSku(), true);
                     } else {
@@ -114,12 +114,14 @@ class AmazonBillingListener implements PurchasingListener {
         if (response.getRequestStatus() == PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL) {
             Receipt[] receipts = response.getReceipts().toArray(new Receipt[0]);
             for (Receipt receipt : receipts) {
-                if (receipt.getProductType() == ProductType.ENTITLED) {
-                    amazonBillingService.productOwned(receipt.getSku(), true);
-                    Log.d(TAG, "onPurchaseUpdatesResponse productOwned: " + receipt.getSku());
-                } else if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
-                    amazonBillingService.subscriptionOwned(receipt.getSku(), true);
-                    Log.d(TAG, "onPurchaseUpdatesResponse subscriptionOwned: " + receipt.getSku());
+                if (receipt != null && !receipt.isCanceled()) {
+                    if (receipt.getProductType() == ProductType.ENTITLED) {
+                        amazonBillingService.productOwned(receipt.getSku(), true);
+                        Log.d(TAG, "onPurchaseUpdatesResponse productOwned: " + receipt.getSku());
+                    } else if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
+                        amazonBillingService.subscriptionOwned(receipt.getSku(), true);
+                        Log.d(TAG, "onPurchaseUpdatesResponse subscriptionOwned: " + receipt.getSku());
+                    }
                 }
             }
         }
