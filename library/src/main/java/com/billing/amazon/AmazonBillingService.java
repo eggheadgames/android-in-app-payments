@@ -58,5 +58,6 @@ public class AmazonBillingService extends BillingService {
 
     @Override
     public void close() {
+        context = null;
     }
 }

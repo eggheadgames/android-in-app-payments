@@ -90,6 +90,7 @@ public class GoogleBillingService extends BillingService {
 
     @Override
     public void close() {
+        iap.dispose();
+        context = null;
     }
-
 }
