@@ -1,12 +1,15 @@
 package com.billing;
 
 import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.CallSuper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public abstract class BillingService {
+    protected Context context;
 
     private List<PurchaseServiceListener> purchaseServiceListeners;
     private List<SubscriptionServiceListener> subscriptionServiceListeners;
@@ -79,5 +82,10 @@ public abstract class BillingService {
 
     public abstract void unsubscribe(Activity activity, String sku, int id);
 
-    public abstract void close();
+    @CallSuper
+    public void close() {
+        context = null;
+        subscriptionServiceListeners.clear();
+        purchaseServiceListeners.clear();
+    }
 }

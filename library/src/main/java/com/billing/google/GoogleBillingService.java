@@ -14,7 +14,6 @@ public class GoogleBillingService extends BillingService {
 
     private IabHelper iap;
     public List<String> iapkeys;
-    private Context context;
     private GoogleBillingListener googleBillingListener;
 
     public GoogleBillingService(Context context, List<String> iapkeys) {
@@ -91,6 +90,6 @@ public class GoogleBillingService extends BillingService {
     @Override
     public void close() {
         iap.dispose();
-        context = null;
+        super.close();
     }
 }

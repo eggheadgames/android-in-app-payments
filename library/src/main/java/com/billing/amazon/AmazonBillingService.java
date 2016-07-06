@@ -55,9 +55,4 @@ public class AmazonBillingService extends BillingService {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void close() {
-        context = null;
-    }
 }
