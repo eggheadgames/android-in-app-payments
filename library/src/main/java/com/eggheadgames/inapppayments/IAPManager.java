@@ -28,8 +28,9 @@ public class IAPManager {
         }
     }
 
-    public static void init(String key) {
+    public static void init(String key, boolean enableLogging) {
         billingService.init(key);
+        billingService.enableDebugLogging(enableLogging);
     }
 
     public static void addPurchaseListener(PurchaseServiceListener purchaseServiceListener) {
@@ -58,10 +59,6 @@ public class IAPManager {
 
     public static void unsubscribe(Activity activity, String sku, int id) {
         billingService.unsubscribe(activity, sku, id);
-    }
-
-    public static void enableDebugLogging(boolean enable) {
-        billingService.enableDebugLogging(enable);
     }
 
     public static void destroy() {
