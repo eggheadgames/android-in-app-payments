@@ -48,7 +48,6 @@ public class GoogleBillingService extends BillingService {
             iap = new IabHelper(context, stringBuilder.toString());
             if (iap != null) {
                 googleBillingListener = new GoogleBillingListener(iap, this);
-                iap.enableDebugLogging(BuildConfig.DEBUG);
                 iap.startSetup(googleBillingListener);
             }
         } catch (Exception ex) {
