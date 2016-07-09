@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.android.vending.billing.IabHelper;
 import com.billing.BillingService;
+import com.eggheadgames.inapppayments.BuildConfig;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class GoogleBillingService extends BillingService {
             iap = new IabHelper(context, stringBuilder.toString());
             if (iap != null) {
                 googleBillingListener = new GoogleBillingListener(iap, this);
+                iap.enableDebugLogging(BuildConfig.DEBUG);
                 iap.startSetup(googleBillingListener);
             }
         } catch (Exception ex) {
