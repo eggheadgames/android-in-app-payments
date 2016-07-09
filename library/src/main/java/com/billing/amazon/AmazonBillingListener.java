@@ -21,29 +21,34 @@ class AmazonBillingListener implements PurchasingListener {
 
     private static final String TAG = AmazonBillingListener.class.getSimpleName();
     private AmazonBillingService amazonBillingService;
+    boolean mDebugLog = false;
 
     AmazonBillingListener(AmazonBillingService amazonBillingService) {
         this.amazonBillingService = amazonBillingService;
-        Log.d(TAG, "IS_SANDBOX_MODE:" + PurchasingService.IS_SANDBOX_MODE);
+        logDebug("IS_SANDBOX_MODE:" + PurchasingService.IS_SANDBOX_MODE);
     }
 
     @Override
     public void onUserDataResponse(UserDataResponse userDataResponse) {
-        Log.d(TAG, "onUserDataResponse " + userDataResponse.getRequestStatus());
+        logDebug("onUserDataResponse " + userDataResponse.getRequestStatus());
+    }
+
+    public void enableDebugLogging(boolean enable) {
+        mDebugLog = enable;
     }
 
     @Override
     public void onProductDataResponse(ProductDataResponse response) {
         final ProductDataResponse.RequestStatus status = response.getRequestStatus();
-        Log.d(TAG, "onProductDataResponse: RequestStatus (" + status + ")");
+        logDebug("onProductDataResponse: RequestStatus (" + status + ")");
 
         switch (status) {
             case SUCCESSFUL:
-                Log.d(TAG, "onProductDataResponse: successful.  The item data map in this response includes the valid SKUs");
+                logDebug("onProductDataResponse: successful.  The item data map in this response includes the valid SKUs");
                 final Set<String> unavailableSkus = response.getUnavailableSkus();
-                Log.d(TAG, "onProductDataResponse: " + unavailableSkus.size() + " unavailable skus");
+                logDebug("onProductDataResponse: " + unavailableSkus.size() + " unavailable skus");
                 Map<String, Product> productData = response.getProductData();
-                Log.d(TAG, "onProductDataResponse productData : " + productData.size());
+                logDebug("onProductDataResponse productData : " + productData.size());
                 Map<String, String> iapkeyPrices = new HashMap<>();
                 for (Map.Entry<String, Product> entry : productData.entrySet()) {
                     Product product = productData.get(entry.getKey());
@@ -53,7 +58,7 @@ class AmazonBillingListener implements PurchasingListener {
                 break;
             case FAILED:
             case NOT_SUPPORTED:
-                Log.d(TAG, "onProductDataResponse: failed, should retry request");
+                logDebug("onProductDataResponse: failed, should retry request");
                 break;
         }
 
@@ -61,19 +66,19 @@ class AmazonBillingListener implements PurchasingListener {
 
     @Override
     public void onPurchaseResponse(PurchaseResponse response) {
-        Log.d(TAG, "onPurchaseResponse " + response.getRequestStatus());
+        logDebug("onPurchaseResponse " + response.getRequestStatus());
         final String requestId = response.getRequestId().toString();
         final String userId = response.getUserData().getUserId();
         final PurchaseResponse.RequestStatus status = response.getRequestStatus();
         final Receipt receipt;
-        Log.d(TAG, "onPurchaseResponse: requestId (" + requestId + ") userId (" + userId + ") purchaseRequestStatus (" + status + ")");
+        logDebug("onPurchaseResponse: requestId (" + requestId + ") userId (" + userId + ") purchaseRequestStatus (" + status + ")");
         switch (status) {
             case SUCCESSFUL:
                 receipt = response.getReceipt();
                 if (receipt != null) {
-                    Log.d(TAG, "onPurchaseResponse: receipt json:" + receipt.toJSON());
-                    Log.d(TAG, "onPurchaseResponse: getUserId:" + response.getUserData().getUserId());
-                    Log.d(TAG, "onPurchaseResponse: getMarketplace:" + response.getUserData().getMarketplace());
+                    logDebug("onPurchaseResponse: receipt json:" + receipt.toJSON());
+                    logDebug("onPurchaseResponse: getUserId:" + response.getUserData().getUserId());
+                    logDebug("onPurchaseResponse: getMarketplace:" + response.getUserData().getMarketplace());
 
                     if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
                         amazonBillingService.subscriptionOwned(receipt.getSku(), false);
@@ -85,7 +90,7 @@ class AmazonBillingListener implements PurchasingListener {
                 }
                 break;
             case ALREADY_PURCHASED:
-                Log.i(TAG, "onPurchaseResponse: already purchased, you should verify the entitlement purchase on your side and make sure the purchase was granted to customer");
+                logDebug("onPurchaseResponse: already purchased, you should verify the entitlement purchase on your side and make sure the purchase was granted to customer");
                 receipt = response.getReceipt();
                 if (receipt != null && !receipt.isCanceled()) {
                     if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
@@ -96,11 +101,11 @@ class AmazonBillingListener implements PurchasingListener {
                 }
                 break;
             case INVALID_SKU:
-                Log.d(TAG, "onPurchaseResponse: invalid SKU!  onProductDataResponse should have disabled buy button already.");
+                logDebug("onPurchaseResponse: invalid SKU!  onProductDataResponse should have disabled buy button already.");
                 break;
             case FAILED:
             case NOT_SUPPORTED:
-                Log.d(TAG, "onPurchaseResponse: failed so remove purchase request from local storage");
+                logDebug("onPurchaseResponse: failed so remove purchase request from local storage");
                 break;
         }
     }
@@ -108,7 +113,7 @@ class AmazonBillingListener implements PurchasingListener {
     @SuppressWarnings({"ConstantConditions", "ToArrayCallWithZeroLengthArrayArgument"})
     @Override
     public void onPurchaseUpdatesResponse(PurchaseUpdatesResponse response) {
-        Log.d(TAG, "onPurchaseUpdatesResponse " + response.getRequestStatus());
+        logDebug("onPurchaseUpdatesResponse " + response.getRequestStatus());
         if (response == null)
             return;
         if (response.getRequestStatus() == PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL) {
@@ -117,13 +122,17 @@ class AmazonBillingListener implements PurchasingListener {
                 if (receipt != null && !receipt.isCanceled()) {
                     if (receipt.getProductType() == ProductType.ENTITLED) {
                         amazonBillingService.productOwned(receipt.getSku(), true);
-                        Log.d(TAG, "onPurchaseUpdatesResponse productOwned: " + receipt.getSku());
+                        logDebug("onPurchaseUpdatesResponse productOwned: " + receipt.getSku());
                     } else if (receipt.getProductType() == ProductType.SUBSCRIPTION) {
                         amazonBillingService.subscriptionOwned(receipt.getSku(), true);
-                        Log.d(TAG, "onPurchaseUpdatesResponse subscriptionOwned: " + receipt.getSku());
+                        logDebug("onPurchaseUpdatesResponse subscriptionOwned: " + receipt.getSku());
                     }
                 }
             }
         }
+    }
+
+    private void logDebug(String msg) {
+        if (mDebugLog) Log.d(TAG, msg);
     }
 }

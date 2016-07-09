@@ -16,6 +16,7 @@ public class AmazonBillingService extends BillingService {
 
     private List<String> iapkeys;
     private Context context;
+    private AmazonBillingListener mAmazonBillingListener;
 
     public AmazonBillingService(Context context, List<String> iapkeys) {
         this.context = context;
@@ -24,8 +25,8 @@ public class AmazonBillingService extends BillingService {
 
     @Override
     public void init(String key) {
-        AmazonBillingListener amazonBillingListener = new AmazonBillingListener(this);
-        PurchasingService.registerListener(context, amazonBillingListener);
+        mAmazonBillingListener = new AmazonBillingListener(this);
+        PurchasingService.registerListener(context, mAmazonBillingListener);
 
         final Set<String> productSkus = new HashSet<>(iapkeys);
         PurchasingService.getProductData(productSkus);
@@ -53,6 +54,13 @@ public class AmazonBillingService extends BillingService {
             activity.finish();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void enableDebugLogging(boolean enable) {
+        if (mAmazonBillingListener != null) {
+            mAmazonBillingListener.enableDebugLogging(enable);
         }
     }
 }

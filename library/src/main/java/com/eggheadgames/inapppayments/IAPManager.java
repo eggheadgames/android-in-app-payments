@@ -60,6 +60,10 @@ public class IAPManager {
         billingService.unsubscribe(activity, sku, id);
     }
 
+    public static void enableDebugLogging(boolean enable) {
+        billingService.enableDebugLogging(enable);
+    }
+
     public static void destroy() {
         billingService.close();
     }

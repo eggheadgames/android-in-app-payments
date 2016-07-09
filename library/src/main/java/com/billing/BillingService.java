@@ -82,6 +82,8 @@ public abstract class BillingService {
 
     public abstract void unsubscribe(Activity activity, String sku, int id);
 
+    public abstract void enableDebugLogging(boolean enable);
+
     @CallSuper
     public void close() {
         context = null;

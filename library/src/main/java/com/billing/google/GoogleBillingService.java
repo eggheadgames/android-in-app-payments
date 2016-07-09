@@ -90,6 +90,13 @@ public class GoogleBillingService extends BillingService {
     }
 
     @Override
+    public void enableDebugLogging(boolean enable) {
+        if (iap != null) {
+            iap.enableDebugLogging(enable);
+        }
+    }
+
+    @Override
     public void close() {
         iap.dispose();
         super.close();
