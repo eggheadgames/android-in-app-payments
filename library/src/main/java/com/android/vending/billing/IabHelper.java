@@ -899,8 +899,8 @@ public class IabHelper {
             }
         }
 
-        if (skuList.size() == 0) {
-            logDebug("queryPrices: nothing to do because there are no SKUs.");
+        if (skuList.size() == 0 || mContext == null) {
+            logDebug("queryPrices: nothing to do because there are no SKUs or context is dead.");
             return BILLING_RESPONSE_RESULT_OK;
         }
 
