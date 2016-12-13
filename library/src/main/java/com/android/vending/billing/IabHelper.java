@@ -526,7 +526,11 @@ public class IabHelper {
         } else {
             logError("Purchase failed. Result code: " + Integer.toString(resultCode)
                     + ". Response: " + getResponseDesc(responseCode));
-            result = new IabResult(IABHELPER_UNKNOWN_PURCHASE_RESPONSE, "Unknown purchase response.");
+            if (responseCode == BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
+                result = new IabResult(BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED, "Success");
+            } else {
+                result = new IabResult(IABHELPER_UNKNOWN_PURCHASE_RESPONSE, "Unknown purchase response.");
+            }
             if (mPurchaseListener != null) mPurchaseListener.onIabPurchaseFinished(result, null);
         }
         return true;

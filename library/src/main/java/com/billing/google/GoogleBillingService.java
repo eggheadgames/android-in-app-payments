@@ -16,6 +16,8 @@ public class GoogleBillingService extends BillingService {
     private IabHelper iap;
     public List<String> iapkeys;
     private GoogleBillingListener googleBillingListener;
+    private String lastRequestedSku;
+    private boolean productPurchaseRequested;
 
     public GoogleBillingService(Context context, List<String> iapkeys) {
         super();
@@ -58,8 +60,11 @@ public class GoogleBillingService extends BillingService {
     @Override
     public void buy(Activity activity, String sku, int id) {
         try {
-            if (iap != null)
+            if (iap != null) {
+                lastRequestedSku = sku;
+                productPurchaseRequested = true;
                 iap.launchPurchaseFlow(activity, sku, id, googleBillingListener);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -68,8 +73,11 @@ public class GoogleBillingService extends BillingService {
     @Override
     public void subscribe(Activity activity, String sku, int id) {
         try {
-            if (iap != null)
+            if (iap != null) {
+                lastRequestedSku = sku;
+                productPurchaseRequested = false;
                 iap.launchSubscriptionPurchaseFlow(activity, sku, id, googleBillingListener);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -99,5 +107,13 @@ public class GoogleBillingService extends BillingService {
     public void close() {
         iap.dispose();
         super.close();
+    }
+
+    public String getLastRequestedSku() {
+        return lastRequestedSku;
+    }
+
+    public boolean isProductPurchaseRequested() {
+        return productPurchaseRequested;
     }
 }

@@ -27,13 +27,20 @@ public class GoogleBillingListener implements IabHelper.OnIabSetupFinishedListen
     @Override
     public void onIabPurchaseFinished(IabResult result, Purchase info) {
         try {
-            if (result != null && info != null && result.isSuccess()) {
+            if (result != null && info != null &&
+                    (result.isSuccess() || result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED)) {
                 //We assume that any problems will have become obvious through the Play store, so no need to do anything
                 //if the purchase has failed.
                 if (info.getItemType().equals(IabHelper.ITEM_TYPE_INAPP)) {
                     googleBillingService.productOwned(info.getSku(), false);
                 } else {
                     googleBillingService.subscriptionOwned(info.getSku(), false);
+                }
+            } else if (result != null && result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
+                if (googleBillingService.isProductPurchaseRequested()) {
+                    googleBillingService.productOwned(googleBillingService.getLastRequestedSku(), false);
+                } else {
+                    googleBillingService.subscriptionOwned(googleBillingService.getLastRequestedSku(), false);
                 }
             }
         } catch (Exception ex) {
