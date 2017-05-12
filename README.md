@@ -89,10 +89,14 @@ IAPManager.build(Context context, int buildTarget, List<String> skuList)
 
 2. Request info about available and owned products
 ```
-IAPManager.init(String key)
+IAPManager.init(String rot13LicenseKey)
 ```
 
-`String key` relevant only for `IAPManager.BUILD_TARGET_GOOGLE`, can be ignored for `IAPManager.BUILD_TARGET_AMAZON`
+`String rot13LicenseKey` is relevant only for `IAPManager.BUILD_TARGET_GOOGLE`, and can be ignored for `IAPManager.BUILD_TARGET_AMAZON`. Note that this is the required Google License Key obtained from the app's Google Play console, after applying the [ROT 13 algorithm](https://en.wikipedia.org/wiki/ROT13). 
+You might choose to store the key as ROT-13 in your app to avoid casual decoding of the strings, however, this is not really secure, so you are advised to follow [Google's advice](https://developer.android.com/training/in-app-billing/preparing-iab-app.html) and then ROT-13 the key before passing it to the API:
+
+> Security Recommendation: Google highly recommends that you do not hard-code the exact public license key string value as provided by Google Play. Instead, construct the whole public license key string at runtime from substrings or retrieve it from an encrypted store before passing it to the constructor. This approach makes it more difficult for malicious third parties to modify the public license key string in your APK file.
+
 
 ### Buying a product
 
