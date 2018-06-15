@@ -7,7 +7,6 @@ import android.net.Uri;
 
 import com.android.vending.billing.IabHelper;
 import com.billing.BillingService;
-import com.eggheadgames.inapppayments.BuildConfig;
 
 import java.util.List;
 
@@ -88,7 +87,12 @@ public class GoogleBillingService extends BillingService {
         try {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/store/account"));
+
+            String subscriptionUrl = "http://play.google.com/store/account/subscriptions"
+                    + "?package=" + activity.getPackageName()
+                    + "&sku=" + sku;
+
+            intent.setData(Uri.parse(subscriptionUrl));
             activity.startActivity(intent);
             activity.finish();
         } catch (Exception e) {
