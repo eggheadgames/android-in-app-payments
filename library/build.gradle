@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.eggheadgames'
+group = 'com.github.eggheadgames'
 
 repositories {
     mavenCentral()
@@ -27,9 +26,9 @@ android {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    api files('libs/in-app-purchasing-2.0.61.jar')
+    api 'androidx.appcompat:appcompat:1.1.0'
 
-    compile files('libs/in-app-purchasing-2.0.61.jar')
-    compile 'com.android.support:appcompat-v7:23.2.1'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:2.24.0'
 }
