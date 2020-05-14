@@ -1,5 +1,6 @@
 package com.eggheadgames.inapppayments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 
@@ -15,16 +16,21 @@ import java.util.List;
 
 public class IAPManager {
 
-    private static BillingService billingService;
     public static int BUILD_TARGET_GOOGLE = 0;
     public static int BUILD_TARGET_AMAZON = 1;
 
+    @SuppressLint("StaticFieldLeak")
+    private static BillingService billingService;
+
     public static void build(Context context, int buildTarget, List<String> iapkeys) {
+        Context applicationContext = context.getApplicationContext();
+        Context contextLocal = applicationContext == null ? context : applicationContext;
+
         //Build-specific initializations
         if (buildTarget == BUILD_TARGET_GOOGLE) {
-            billingService = new GoogleBillingService(context, iapkeys);
+            billingService = new GoogleBillingService(contextLocal, iapkeys);
         } else if (buildTarget == BUILD_TARGET_AMAZON) {
-            billingService = new AmazonBillingService(context, iapkeys);
+            billingService = new AmazonBillingService(contextLocal, iapkeys);
         }
     }
 
