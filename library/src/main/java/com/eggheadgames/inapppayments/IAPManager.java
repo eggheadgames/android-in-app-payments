@@ -16,8 +16,8 @@ import java.util.List;
 
 public class IAPManager {
 
-    public static int BUILD_TARGET_GOOGLE = 0;
-    public static int BUILD_TARGET_AMAZON = 1;
+    public static final int BUILD_TARGET_GOOGLE = 0;
+    public static final int BUILD_TARGET_AMAZON = 1;
 
     @SuppressLint("StaticFieldLeak")
     private static BillingService billingService;
