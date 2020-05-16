@@ -113,7 +113,7 @@ class AmazonBillingListener implements PurchasingListener {
     @SuppressWarnings({"ConstantConditions", "ToArrayCallWithZeroLengthArrayArgument"})
     @Override
     public void onPurchaseUpdatesResponse(PurchaseUpdatesResponse response) {
-        logDebug("onPurchaseUpdatesResponse " + response.getRequestStatus());
+        logDebug("onPurchaseUpdatesResponse " + (response == null ? "null" : response.getRequestStatus()));
         if (response == null)
             return;
         if (response.getRequestStatus() == PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL) {

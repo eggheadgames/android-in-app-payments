@@ -33,6 +33,8 @@ package com.android.vending.billing;
 
 import android.annotation.SuppressLint;
 
+import java.nio.charset.Charset;
+
 /**
  * Base64 converter class. This code is not a complete MIME encoder;
  * it simply converts binary data to base64 data and back.
@@ -295,7 +297,7 @@ public class Base64 {
             outLen -= 1;
         }
 
-        return new String(outBuff, 0, outLen);
+        return new String(outBuff, 0, outLen, Charset.defaultCharset());
     }
 
     /**
@@ -430,7 +432,7 @@ public class Base64 {
      * @since 1.4
      */
     public static byte[] decode(String s) throws Base64DecoderException {
-        byte[] bytes = s.getBytes();
+        byte[] bytes = s.getBytes(Charset.defaultCharset());
         return decode(bytes, 0, bytes.length);
     }
 
@@ -442,7 +444,7 @@ public class Base64 {
      * @return the decoded data
      */
     public static byte[] decodeWebSafe(String s) throws Base64DecoderException {
-        byte[] bytes = s.getBytes();
+        byte[] bytes = s.getBytes(Charset.defaultCharset());
         return decodeWebSafe(bytes, 0, bytes.length);
     }
 

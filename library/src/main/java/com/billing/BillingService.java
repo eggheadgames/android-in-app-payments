@@ -2,7 +2,7 @@ package com.billing;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.CallSuper;
+import androidx.annotation.CallSuper;
 
 import java.util.ArrayList;
 import java.util.List;

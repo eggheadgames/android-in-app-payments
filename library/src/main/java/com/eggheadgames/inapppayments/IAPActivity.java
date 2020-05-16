@@ -1,7 +1,7 @@
 package com.eggheadgames.inapppayments;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.billing.BillingService;
 import com.billing.google.GoogleBillingService;
