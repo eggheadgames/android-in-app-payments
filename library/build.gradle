@@ -1,21 +1,24 @@
-apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+plugins {
+    id 'com.android.library'
+    id 'com.novoda.static-analysis' version '1.2'
+    id "com.github.spotbugs" version '3.0.0'
+}
 
-group='com.github.eggheadgames'
+group = 'com.github.eggheadgames'
 
 repositories {
     mavenCentral()
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion rootProject.ext.general.compileSdkVersion
+    buildToolsVersion rootProject.ext.general.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 11
-        versionName "1.2.8"
+        minSdkVersion rootProject.ext.general.minSdkVersion
+        targetSdkVersion rootProject.ext.general.targetSdkVersion
+        versionCode rootProject.ext.general.versionCode
+        versionName rootProject.ext.general.versionName
     }
 
     lintOptions {
@@ -27,9 +30,28 @@ android {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    api files('libs/in-app-purchasing-2.0.61.jar')
+    api 'androidx.appcompat:appcompat:1.1.0'
 
-    compile files('libs/in-app-purchasing-2.0.61.jar')
-    compile 'com.android.support:appcompat-v7:23.2.1'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:2.24.0'
+}
+
+staticAnalysis {
+    penalty {
+        maxErrors = 0
+        maxWarnings = 0
+    }
+    pmd {
+        ignoreFailures = false
+        reportsDir = file("$project.buildDir/outputs/")
+    }
+    spotbugs {
+        ignoreFailures = false
+        reportsDir = file("$project.buildDir/outputs/")
+        reportLevel = "medium"
+        effort = "max"
+
+        excludeFilter rootProject.file('library/findbugs_excludes.xml')
+    }
 }

@@ -18,6 +18,7 @@ package com.android.vending.billing;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -100,7 +101,7 @@ public class Security {
         try {
             sig = Signature.getInstance(SIGNATURE_ALGORITHM);
             sig.initVerify(publicKey);
-            sig.update(signedData.getBytes());
+            sig.update(signedData.getBytes(Charset.defaultCharset()));
             if (!sig.verify(Base64.decode(signature))) {
                 Log.e(TAG, "Signature verification failed.");
                 return false;

@@ -65,6 +65,10 @@ public class SkuDetails {
         return mDescription;
     }
 
+    public String getItemType() {
+        return mItemType;
+    }
+
     @Override
     public String toString() {
         return "SkuDetails:" + mJson;
