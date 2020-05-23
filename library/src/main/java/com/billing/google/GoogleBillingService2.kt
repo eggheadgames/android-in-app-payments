@@ -15,6 +15,8 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     private lateinit var mBillingClient: BillingClient
     private lateinit var decodedKey: String
 
+    var enableDebug: Boolean = false
+
     private val skusDetails = mutableMapOf<String, SkuDetails?>()
 
     override fun init(key: String) {
@@ -25,7 +27,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     }
 
     override fun onBillingSetupFinished(billingResult: BillingResult) {
-        Log.d(TAG, "onBillingSetupFinished: billingResult: $billingResult")
+        log("onBillingSetupFinished: billingResult: $billingResult")
         if (billingResult.isOk()) {
             querySkuDetails()
             queryPurchases()
@@ -46,7 +48,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
      * New purchases will be provided to the PurchasesUpdatedListener.
      */
     private fun queryPurchases() {
-        Log.d(TAG, "queryPurchases: SUBS")
+        log("queryPurchases: SUBS")
         val result: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS)
         if (result != null && result.purchasesList != null) {
             processPurchases(result.purchasesList, isRestore = true)
@@ -55,7 +57,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
 
     override fun buy(activity: Activity, sku: String, id: Int) {
         if (!sku.isSkuReady()) {
-            Log.w(TAG, "buy. Google billing service is not ready yet.")
+            log("buy. Google billing service is not ready yet.")
             return
         }
 
@@ -64,7 +66,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
 
     override fun subscribe(activity: Activity, sku: String, id: Int) {
         if (!sku.isSkuReady()) {
-            Log.w(TAG, "buy. Google billing service is not ready yet.")
+            log("buy. Google billing service is not ready yet.")
             return
         }
 
@@ -95,7 +97,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     }
 
     override fun enableDebugLogging(enable: Boolean) {
-        // todo. New Google billing does not have debug logs.
+        this.enableDebug = enable
     }
 
     /**
@@ -109,30 +111,33 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
 
         val responseCode = billingResult.responseCode
         val debugMessage = billingResult.debugMessage
-        Log.d(TAG, "onPurchasesUpdated: responseCode:$responseCode debugMessage: $debugMessage")
+        log("onPurchasesUpdated: responseCode:$responseCode debugMessage: $debugMessage")
         when (responseCode) {
             BillingClient.BillingResponseCode.OK -> {
-                Log.d(TAG, "onPurchasesUpdated. purchase: $purchases")
+                log("onPurchasesUpdated. purchase: $purchases")
                 processPurchases(purchases)
             }
-            BillingClient.BillingResponseCode.USER_CANCELED -> Log.i(TAG, "onPurchasesUpdated: User canceled the purchase")
-            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> Log.i(TAG, "onPurchasesUpdated: The user already owns this item")
-            BillingClient.BillingResponseCode.DEVELOPER_ERROR -> Log.e(TAG, "onPurchasesUpdated: Developer error means that Google Play " +
-                    "does not recognize the configuration. If you are just getting started, " +
-                    "make sure you have configured the application correctly in the " +
-                    "Google Play Console. The SKU product ID must match and the APK you " +
-                    "are using must be signed with release keys."
-            )
+            BillingClient.BillingResponseCode.USER_CANCELED ->
+                log("onPurchasesUpdated: User canceled the purchase")
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED ->
+                log("onPurchasesUpdated: The user already owns this item")
+            BillingClient.BillingResponseCode.DEVELOPER_ERROR ->
+                Log.e(TAG, "onPurchasesUpdated: Developer error means that Google Play " +
+                        "does not recognize the configuration. If you are just getting started, " +
+                        "make sure you have configured the application correctly in the " +
+                        "Google Play Console. The SKU product ID must match and the APK you " +
+                        "are using must be signed with release keys."
+                )
         }
     }
 
     private fun processPurchases(purchasesList: List<Purchase>?, isRestore: Boolean = false) {
         if (purchasesList != null) {
-            Log.d(TAG, "processPurchases: " + purchasesList.size + " purchase(s)")
+            log("processPurchases: " + purchasesList.size + " purchase(s)")
             purchases@ for (purchase in purchasesList) {
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && purchase.sku.isSkuReady()) {
                     if (!isSignatureValid(purchase)) {
-                        Log.d(TAG, "processPurchases. Signature is not valid for: $purchase")
+                        log("processPurchases. Signature is not valid for: $purchase")
                         continue@purchases
                     }
 
@@ -159,7 +164,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
                 }
             }
         } else {
-            Log.d(TAG, "processPurchases: with no purchases")
+            log("processPurchases: with no purchases")
         }
     }
 
@@ -173,7 +178,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
      */
     private fun String.toSkuDetails(type: String, done: (skuDetails: SkuDetails?) -> Unit = {}) {
         if (::mBillingClient.isInitialized.not() || !mBillingClient.isReady) {
-            Log.w(TAG, "buy. Google billing service is not ready yet.")
+            log("buy. Google billing service is not ready yet.")
             done(null)
             return
         }
@@ -193,7 +198,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
                 skusDetails[this] = skuDetails
                 done(skuDetails)
             } else {
-                Log.w(TAG, "launchBillingFlow. Failed to get details for sku: $this")
+                log("launchBillingFlow. Failed to get details for sku: $this")
                 done(null)
             }
         }
@@ -204,11 +209,11 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     }
 
     override fun onBillingServiceDisconnected() {
-        Log.d(TAG, "onBillingServiceDisconnected")
+        log("onBillingServiceDisconnected")
     }
 
     override fun onAcknowledgePurchaseResponse(billingResult: BillingResult) {
-        Log.d(TAG, "onAcknowledgePurchaseResponse: billingResult: $billingResult")
+        log("onAcknowledgePurchaseResponse: billingResult: $billingResult")
     }
 
     private fun decodeKey(key: String): String {
@@ -227,6 +232,12 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
 
     private fun BillingResult.isOk(): Boolean {
         return this.responseCode == BillingClient.BillingResponseCode.OK
+    }
+
+    private fun log(message: String) {
+        if (enableDebug) {
+            Log.d(TAG, message)
+        }
     }
 
     companion object {
