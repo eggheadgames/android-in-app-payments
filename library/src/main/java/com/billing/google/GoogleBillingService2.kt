@@ -6,17 +6,19 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.android.billingclient.api.*
+import com.android.vending.billing.Security
 import com.billing.BillingService
 
 class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<String>, private val subscriptionSkuKeys: List<String>)
     : BillingService(context), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
 
     private lateinit var mBillingClient: BillingClient
+    private lateinit var decodedKey: String
 
     private val skusDetails = mutableMapOf<String, SkuDetails?>()
 
     override fun init(key: String) {
-        val decodedKey = decodeKey(key)
+        decodedKey = decodeKey(key)
 
         mBillingClient = BillingClient.newBuilder(context).setListener(this).build()
         mBillingClient.startConnection(this)
@@ -127,8 +129,12 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     private fun processPurchases(purchasesList: List<Purchase>?, isRestore: Boolean = false) {
         if (purchasesList != null) {
             Log.d(TAG, "processPurchases: " + purchasesList.size + " purchase(s)")
-            for (purchase in purchasesList) {
+            purchases@ for (purchase in purchasesList) {
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && purchase.sku.isSkuReady()) {
+                    if (!isSignatureValid(purchase)) {
+                        Log.d(TAG, "processPurchases. Signature is not valid for: $purchase")
+                        continue@purchases
+                    }
 
                     // Grant entitlement to the user.
                     val skuDetails = skusDetails[purchase.sku]
@@ -157,6 +163,9 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
         }
     }
 
+    private fun isSignatureValid(purchase: Purchase): Boolean {
+        return Security.verifyPurchase(decodedKey, purchase.originalJson, purchase.signature)
+    }
 
     /**
      * Get Sku details by sku and type.
