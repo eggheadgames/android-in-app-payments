@@ -37,6 +37,7 @@ dependencies {
 
     api files('libs/in-app-purchasing-2.0.61.jar')
     api 'androidx.appcompat:appcompat:1.1.0'
+    api 'com.android.billingclient:billing:2.2.0'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.24.0'

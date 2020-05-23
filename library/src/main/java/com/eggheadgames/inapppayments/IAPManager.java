@@ -8,7 +8,7 @@ import com.billing.BillingService;
 import com.billing.PurchaseServiceListener;
 import com.billing.SubscriptionServiceListener;
 import com.billing.amazon.AmazonBillingService;
-import com.billing.google.GoogleBillingService;
+import com.billing.google.GoogleBillingService2;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class IAPManager {
 
         //Build-specific initializations
         if (buildTarget == BUILD_TARGET_GOOGLE) {
-            billingService = new GoogleBillingService(contextLocal, iapkeys);
+            billingService = new GoogleBillingService2(contextLocal, iapkeys);
         } else if (buildTarget == BUILD_TARGET_AMAZON) {
             billingService = new AmazonBillingService(contextLocal, iapkeys);
         }
