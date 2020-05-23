@@ -26,6 +26,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
         Log.d(TAG, "onBillingSetupFinished: billingResult: $billingResult")
         if (billingResult.isOk()) {
             querySkuDetails()
+            queryPurchases()
         }
     }
 
@@ -35,6 +36,18 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
         }
         subscriptionSkuKeys.forEach {
             it.toSkuDetails(BillingClient.SkuType.SUBS)
+        }
+    }
+
+    /**
+     * Query Google Play Billing for existing purchases.
+     * New purchases will be provided to the PurchasesUpdatedListener.
+     */
+    private fun queryPurchases() {
+        Log.d(TAG, "queryPurchases: SUBS")
+        val result: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS)
+        if (result != null && result.purchasesList != null) {
+            processPurchases(result.purchasesList, isRestore = true)
         }
     }
 
@@ -111,7 +124,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
         }
     }
 
-    private fun processPurchases(purchasesList: List<Purchase>?) {
+    private fun processPurchases(purchasesList: List<Purchase>?, isRestore: Boolean = false) {
         if (purchasesList != null) {
             Log.d(TAG, "processPurchases: " + purchasesList.size + " purchase(s)")
             for (purchase in purchasesList) {
@@ -121,10 +134,10 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
                     val skuDetails = skusDetails[purchase.sku]
                     when (skuDetails?.type) {
                         BillingClient.SkuType.INAPP -> {
-                            productOwned(purchase.sku, false)
+                            productOwned(purchase.sku, isRestore)
                         }
                         BillingClient.SkuType.SUBS -> {
-                            subscriptionOwned(purchase.sku, false)
+                            subscriptionOwned(purchase.sku, isRestore)
                         }
                     }
 
