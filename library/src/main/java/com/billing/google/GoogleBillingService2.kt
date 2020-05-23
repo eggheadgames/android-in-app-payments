@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.android.billingclient.api.*
-import com.android.vending.billing.Security
 import com.billing.BillingService
 
 class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<String>, private val subscriptionSkuKeys: List<String>)
@@ -20,7 +19,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     private val skusDetails = mutableMapOf<String, SkuDetails?>()
 
     override fun init(key: String) {
-        decodedKey = decodeKey(key)
+        decodedKey = key
 
         mBillingClient = BillingClient.newBuilder(context).setListener(this).build()
         mBillingClient.startConnection(this)
@@ -214,20 +213,6 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
 
     override fun onAcknowledgePurchaseResponse(billingResult: BillingResult) {
         log("onAcknowledgePurchaseResponse: billingResult: $billingResult")
-    }
-
-    private fun decodeKey(key: String): String {
-        val stringBuilder = StringBuilder()
-        for (element in key) {
-            var c = element
-            if (c in 'A'..'M' || c in 'a'..'m') {
-                c += 13
-            } else if (c in 'N'..'Z' || c in 'n'..'z') {
-                c -= 13
-            }
-            stringBuilder.append(c)
-        }
-        return stringBuilder.toString()
     }
 
     private fun BillingResult.isOk(): Boolean {
