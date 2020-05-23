@@ -15,11 +15,10 @@ import java.util.Set;
 public class AmazonBillingService extends BillingService {
 
     private List<String> iapkeys;
-    private Context context;
     private AmazonBillingListener mAmazonBillingListener;
 
     public AmazonBillingService(Context context, List<String> iapkeys) {
-        this.context = context;
+        super(context);
         this.iapkeys = iapkeys;
     }
 

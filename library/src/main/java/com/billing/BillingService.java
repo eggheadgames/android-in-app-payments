@@ -15,7 +15,8 @@ public abstract class BillingService {
     private List<SubscriptionServiceListener> subscriptionServiceListeners;
 
     @SuppressWarnings("WeakerAccess")
-    public BillingService() {
+    public BillingService(Context context) {
+        this.context = context;
         purchaseServiceListeners = new ArrayList<>();
         subscriptionServiceListeners = new ArrayList<>();
     }
