@@ -21,7 +21,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     override fun init(key: String) {
         decodedKey = key
 
-        mBillingClient = BillingClient.newBuilder(context).setListener(this).build()
+        mBillingClient = BillingClient.newBuilder(context).setListener(this).enablePendingPurchases().build()
         mBillingClient.startConnection(this)
     }
 
