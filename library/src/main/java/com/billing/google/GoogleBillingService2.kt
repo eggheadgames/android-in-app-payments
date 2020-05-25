@@ -14,7 +14,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     private lateinit var mBillingClient: BillingClient
     private lateinit var decodedKey: String
 
-    var enableDebug: Boolean = false
+    private var enableDebug: Boolean = false
 
     private val skusDetails = mutableMapOf<String, SkuDetails?>()
 
@@ -34,12 +34,8 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     }
 
     private fun querySkuDetails() {
-        inAppSkuKeys.forEach {
-            it.toSkuDetails(BillingClient.SkuType.INAPP)
-        }
-        subscriptionSkuKeys.forEach {
-            it.toSkuDetails(BillingClient.SkuType.SUBS)
-        }
+        inAppSkuKeys.querySkuDetails(BillingClient.SkuType.INAPP)
+        subscriptionSkuKeys.querySkuDetails(BillingClient.SkuType.SUBS)
     }
 
     /**
@@ -169,6 +165,30 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
 
     private fun isSignatureValid(purchase: Purchase): Boolean {
         return Security.verifyPurchase(decodedKey, purchase.originalJson, purchase.signature)
+    }
+
+    /**
+     * Update Sku details after initialization.
+     * This method has cache functionality.
+     */
+    private fun List<String>.querySkuDetails(type: String) {
+        if (::mBillingClient.isInitialized.not() || !mBillingClient.isReady) {
+            log("querySkuDetails. Google billing service is not ready yet.")
+            return
+        }
+
+        val params = SkuDetailsParams.newBuilder()
+        params.setSkusList(this).setType(type)
+
+        mBillingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
+            if (billingResult.isOk()) {
+                skuDetailsList?.forEach { skusDetails[it.sku] = it }
+
+                skusDetails.mapNotNull { entry ->
+                    entry.value?.price?.let { entry.key to it }
+                }.let { updatePrices(it.toMap()) }
+            }
+        }
     }
 
     /**
