@@ -28,14 +28,12 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
     override fun onBillingSetupFinished(billingResult: BillingResult) {
         log("onBillingSetupFinished: billingResult: $billingResult")
         if (billingResult.isOk()) {
-            querySkuDetails()
-            queryPurchases()
+            inAppSkuKeys.querySkuDetails(BillingClient.SkuType.INAPP) {
+                subscriptionSkuKeys.querySkuDetails(BillingClient.SkuType.SUBS) {
+                    queryPurchases()
+                }
+            }
         }
-    }
-
-    private fun querySkuDetails() {
-        inAppSkuKeys.querySkuDetails(BillingClient.SkuType.INAPP)
-        subscriptionSkuKeys.querySkuDetails(BillingClient.SkuType.SUBS)
     }
 
     /**
@@ -174,9 +172,10 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
      * Update Sku details after initialization.
      * This method has cache functionality.
      */
-    private fun List<String>.querySkuDetails(type: String) {
+    private fun List<String>.querySkuDetails(type: String, done: () -> Unit) {
         if (::mBillingClient.isInitialized.not() || !mBillingClient.isReady) {
             log("querySkuDetails. Google billing service is not ready yet.")
+            done()
             return
         }
 
@@ -191,6 +190,7 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
                     entry.value?.price?.let { entry.key to it }
                 }.let { updatePrices(it.toMap()) }
             }
+            done()
         }
     }
 
