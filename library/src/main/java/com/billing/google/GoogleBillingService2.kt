@@ -237,6 +237,11 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
         log("onAcknowledgePurchaseResponse: billingResult: $billingResult")
     }
 
+    override fun close() {
+        mBillingClient.endConnection()
+        super.close()
+    }
+
     private fun BillingResult.isOk(): Boolean {
         return this.responseCode == BillingClient.BillingResponseCode.OK
     }
