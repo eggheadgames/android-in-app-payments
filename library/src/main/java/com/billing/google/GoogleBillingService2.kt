@@ -114,8 +114,10 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
             }
             BillingClient.BillingResponseCode.USER_CANCELED ->
                 log("onPurchasesUpdated: User canceled the purchase")
-            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED ->
-                log("onPurchasesUpdated: The user already owns this item")
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
+                log("onPurchasesUpdated: The user already owns this item $purchases")
+                processPurchases(purchases, true)
+            }
             BillingClient.BillingResponseCode.DEVELOPER_ERROR ->
                 Log.e(TAG, "onPurchasesUpdated: Developer error means that Google Play " +
                         "does not recognize the configuration. If you are just getting started, " +
