@@ -43,10 +43,13 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
      * New purchases will be provided to the PurchasesUpdatedListener.
      */
     private fun queryPurchases() {
-        log("queryPurchases: SUBS")
-        val result: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS)
-        if (result != null && result.purchasesList != null) {
-            processPurchases(result.purchasesList, isRestore = true)
+        val inappResult: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP)
+        if (inappResult != null && inappResult.purchasesList != null) {
+            processPurchases(inappResult.purchasesList, isRestore = true)
+        }
+        val subsResult: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS)
+        if (subsResult != null && subsResult.purchasesList != null) {
+            processPurchases(subsResult.purchasesList, isRestore = true)
         }
     }
 
@@ -114,10 +117,8 @@ class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<Str
             }
             BillingClient.BillingResponseCode.USER_CANCELED ->
                 log("onPurchasesUpdated: User canceled the purchase")
-            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
-                log("onPurchasesUpdated: The user already owns this item $purchases")
-                processPurchases(purchases, true)
-            }
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED ->
+                log("onPurchasesUpdated: The user already owns this item")
             BillingClient.BillingResponseCode.DEVELOPER_ERROR ->
                 Log.e(TAG, "onPurchasesUpdated: Developer error means that Google Play " +
                         "does not recognize the configuration. If you are just getting started, " +
