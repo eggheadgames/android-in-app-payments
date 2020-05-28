@@ -8,8 +8,9 @@ import com.billing.BillingService;
 import com.billing.PurchaseServiceListener;
 import com.billing.SubscriptionServiceListener;
 import com.billing.amazon.AmazonBillingService;
-import com.billing.google.GoogleBillingService;
+import com.billing.google.GoogleBillingService2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //Public front-end for IAP functionality. 
@@ -22,15 +23,24 @@ public class IAPManager {
     @SuppressLint("StaticFieldLeak")
     private static BillingService billingService;
 
-    public static void build(Context context, int buildTarget, List<String> iapkeys) {
+    /**
+     * @param context          - application context
+     * @param buildTarget      - IAPManager.BUILD_TARGET_GOOGLE or IAPManager.BUILD_TARGET_AMAZON
+     * @param iapKeys          - list of sku for purchases
+     * @param subscriptionKeys - list of sku for subscriptions
+     */
+    public static void build(Context context, int buildTarget, List<String> iapKeys, List<String> subscriptionKeys) {
         Context applicationContext = context.getApplicationContext();
         Context contextLocal = applicationContext == null ? context : applicationContext;
 
         //Build-specific initializations
         if (buildTarget == BUILD_TARGET_GOOGLE) {
-            billingService = new GoogleBillingService(contextLocal, iapkeys);
+            billingService = new GoogleBillingService2(contextLocal, iapKeys, subscriptionKeys);
         } else if (buildTarget == BUILD_TARGET_AMAZON) {
-            billingService = new AmazonBillingService(contextLocal, iapkeys);
+            List<String> keys = new ArrayList<>();
+            keys.addAll(iapKeys);
+            keys.addAll(subscriptionKeys);
+            billingService = new AmazonBillingService(contextLocal, keys);
         }
     }
 

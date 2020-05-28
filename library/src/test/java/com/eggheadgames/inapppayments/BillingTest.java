@@ -23,7 +23,7 @@ public class BillingTest {
 
     @Test
     public void onProductOwnedEvent_eachRegisteredListenerShouldBeTriggered() throws Exception {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         PurchaseServiceListener firstListener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(firstListener);
@@ -39,7 +39,7 @@ public class BillingTest {
 
     @Test
     public void onProductDetailsFetched_eachRegisteredListenerShouldBeTriggered() {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         PurchaseServiceListener firstListener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(firstListener);
@@ -59,7 +59,7 @@ public class BillingTest {
 
     @Test
     public void onIapManagerInteraction_onlyRegisteredListenersShouldBeTriggered() {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         PurchaseServiceListener firstListener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(firstListener);
@@ -78,7 +78,7 @@ public class BillingTest {
 
     @Test
     public void onProductPurchase_purchaseCallbackShouldBeTriggered() {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         PurchaseServiceListener listener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(listener);
@@ -90,7 +90,7 @@ public class BillingTest {
 
     @Test
     public void onProductRestore_restoreCallbackShouldBeTriggered() {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         PurchaseServiceListener listener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(listener);
@@ -102,7 +102,7 @@ public class BillingTest {
 
     @Test
     public void onSubscriptionPurchase_purchaseCallbackShouldBeTriggered() {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         SubscriptionServiceListener listener = Mockito.spy(SubscriptionServiceListener.class);
         IAPManager.addSubscriptionListener(listener);
@@ -114,7 +114,7 @@ public class BillingTest {
 
     @Test
     public void onSubscriptionRestore_restoreCallbackShouldBeTriggered() {
-        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>());
+        IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, new ArrayList<String>(), new ArrayList<String>());
 
         SubscriptionServiceListener listener = Mockito.spy(SubscriptionServiceListener.class);
         IAPManager.addSubscriptionListener(listener);
