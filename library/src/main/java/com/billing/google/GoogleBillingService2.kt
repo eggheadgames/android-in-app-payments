@@ -8,8 +8,8 @@ import android.util.Log
 import com.android.billingclient.api.*
 import com.billing.BillingService
 
-class GoogleBillingService2(context: Context, private val inAppSkuKeys: List<String>, private val subscriptionSkuKeys: List<String>)
-    : BillingService(context), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
+class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List<String>, private val subscriptionSkuKeys: List<String>)
+    : BillingService(), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
 
     private lateinit var mBillingClient: BillingClient
     private lateinit var decodedKey: String
