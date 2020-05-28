@@ -6,17 +6,19 @@ import android.content.Intent
 import android.net.Uri
 import com.amazon.device.iap.PurchasingService
 import com.billing.BillingService
-import java.util.*
 
-class AmazonBillingService(val context: Context, private val iapkeys: List<String>) : BillingService() {
+class AmazonBillingService(val context: Context, private val iapKeys: List<String>) : BillingService() {
 
     private var mAmazonBillingListener: AmazonBillingListener? = null
 
     override fun init(key: String) {
         mAmazonBillingListener = AmazonBillingListener(this)
         PurchasingService.registerListener(context, mAmazonBillingListener)
-        val productSkus: Set<String> = HashSet(iapkeys)
-        PurchasingService.getProductData(productSkus)
+
+        iapKeys.splitMessages(MAX_SKU_LIMIT).forEach {
+            PurchasingService.getProductData(it.toSet())
+        }
+
         PurchasingService.getPurchaseUpdates(true)
     }
 
@@ -44,4 +46,11 @@ class AmazonBillingService(val context: Context, private val iapkeys: List<Strin
         mAmazonBillingListener?.enableDebugLogging(enable)
     }
 
+    companion object {
+        const val MAX_SKU_LIMIT = 100
+    }
+}
+
+fun List<String>.splitMessages(maxSize: Int): List<List<String>> {
+    return this.chunked(maxSize)
 }
