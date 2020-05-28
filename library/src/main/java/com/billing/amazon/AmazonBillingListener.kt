@@ -4,7 +4,6 @@ import android.util.Log
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.*
-import java.util.*
 
 internal class AmazonBillingListener(private val amazonBillingService: AmazonBillingService) : PurchasingListener {
 
@@ -28,14 +27,13 @@ internal class AmazonBillingListener(private val amazonBillingService: AmazonBil
                 logDebug("onProductDataResponse: " + unavailableSkus.size + " unavailable skus")
                 val productData = response.productData
                 logDebug("onProductDataResponse productData : " + productData.size)
-                val iapkeyPrices: MutableMap<String, String> = HashMap()
-                for ((key) in productData) {
-                    val product = productData[key]
-                    iapkeyPrices[product!!.sku] = product.price
-                }
+                val iapkeyPrices = productData.map {
+                    it.value.sku to it.value.price
+                }.toMap()
                 amazonBillingService.updatePrices(iapkeyPrices)
             }
-            ProductDataResponse.RequestStatus.FAILED, ProductDataResponse.RequestStatus.NOT_SUPPORTED -> logDebug("onProductDataResponse: failed, should retry request")
+            ProductDataResponse.RequestStatus.FAILED, ProductDataResponse.RequestStatus.NOT_SUPPORTED, null ->
+                logDebug("onProductDataResponse: failed, should retry request")
         }
     }
 
@@ -44,11 +42,10 @@ internal class AmazonBillingListener(private val amazonBillingService: AmazonBil
         val requestId = response.requestId.toString()
         val userId = response.userData.userId
         val status = response.requestStatus
-        val receipt: Receipt?
+        val receipt: Receipt? = response.receipt
         logDebug("onPurchaseResponse: requestId ($requestId) userId ($userId) purchaseRequestStatus ($status)")
         when (status) {
             PurchaseResponse.RequestStatus.SUCCESSFUL -> {
-                receipt = response.receipt
                 if (receipt != null) {
                     logDebug("onPurchaseResponse: receipt json:" + receipt.toJSON())
                     logDebug("onPurchaseResponse: getUserId:" + response.userData.userId)
@@ -63,7 +60,6 @@ internal class AmazonBillingListener(private val amazonBillingService: AmazonBil
             }
             PurchaseResponse.RequestStatus.ALREADY_PURCHASED -> {
                 logDebug("onPurchaseResponse: already purchased, you should verify the entitlement purchase on your side and make sure the purchase was granted to customer")
-                receipt = response.receipt
                 if (receipt != null && !receipt.isCanceled) {
                     if (receipt.productType == ProductType.SUBSCRIPTION) {
                         amazonBillingService.subscriptionOwned(receipt.sku, true)
@@ -73,7 +69,7 @@ internal class AmazonBillingListener(private val amazonBillingService: AmazonBil
                 }
             }
             PurchaseResponse.RequestStatus.INVALID_SKU -> logDebug("onPurchaseResponse: invalid SKU!  onProductDataResponse should have disabled buy button already.")
-            PurchaseResponse.RequestStatus.FAILED, PurchaseResponse.RequestStatus.NOT_SUPPORTED -> logDebug("onPurchaseResponse: failed so remove purchase request from local storage")
+            PurchaseResponse.RequestStatus.FAILED, PurchaseResponse.RequestStatus.NOT_SUPPORTED, null -> logDebug("onPurchaseResponse: failed so remove purchase request from local storage")
         }
     }
 
