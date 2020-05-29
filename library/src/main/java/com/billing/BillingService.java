@@ -1,7 +1,7 @@
 package com.billing;
 
 import android.app.Activity;
-import android.content.Context;
+
 import androidx.annotation.CallSuper;
 
 import java.util.ArrayList;
@@ -9,14 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BillingService {
-    protected Context context;
 
     private List<PurchaseServiceListener> purchaseServiceListeners;
     private List<SubscriptionServiceListener> subscriptionServiceListeners;
 
     @SuppressWarnings("WeakerAccess")
-    public BillingService(Context context) {
-        this.context = context;
+    public BillingService() {
         purchaseServiceListeners = new ArrayList<>();
         subscriptionServiceListeners = new ArrayList<>();
     }
@@ -87,7 +85,6 @@ public abstract class BillingService {
 
     @CallSuper
     public void close() {
-        context = null;
         subscriptionServiceListeners.clear();
         purchaseServiceListeners.clear();
     }
