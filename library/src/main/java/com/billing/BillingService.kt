@@ -1,6 +1,8 @@
 package com.billing
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.CallSuper
 
 abstract class BillingService {
@@ -29,6 +31,12 @@ abstract class BillingService {
      * @param isRestore - a flag indicating whether it's a fresh purchase or restored product
      */
     fun productOwned(sku: String?, isRestore: Boolean) {
+        findUiHandler().post {
+            productOwnedInternal(sku, isRestore)
+        }
+    }
+
+    fun productOwnedInternal(sku: String?, isRestore: Boolean) {
         for (purchaseServiceListener in purchaseServiceListeners) {
             if (isRestore) {
                 purchaseServiceListener.onProductRestored(sku)
@@ -43,6 +51,12 @@ abstract class BillingService {
      * @param isRestore - a flag indicating whether it's a fresh purchase or restored subscription
      */
     fun subscriptionOwned(sku: String, isRestore: Boolean) {
+        findUiHandler().post {
+            subscriptionOwnedInternal(sku, isRestore)
+        }
+    }
+
+    fun subscriptionOwnedInternal(sku: String, isRestore: Boolean) {
         for (subscriptionServiceListener in subscriptionServiceListeners) {
             if (isRestore) {
                 subscriptionServiceListener.onSubscriptionRestored(sku)
@@ -53,6 +67,12 @@ abstract class BillingService {
     }
 
     fun updatePrices(iapkeyPrices: Map<String, String>) {
+        findUiHandler().post {
+            updatePricesInternal(iapkeyPrices)
+        }
+    }
+
+    fun updatePricesInternal(iapkeyPrices: Map<String, String>) {
         for (billingServiceListener in purchaseServiceListeners) {
             billingServiceListener.onPricesUpdated(iapkeyPrices)
         }
@@ -72,4 +92,8 @@ abstract class BillingService {
         subscriptionServiceListeners.clear()
         purchaseServiceListeners.clear()
     }
+}
+
+fun findUiHandler(): Handler {
+    return Handler(Looper.getMainLooper())
 }

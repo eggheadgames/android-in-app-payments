@@ -31,7 +31,7 @@ public class BillingTest {
         PurchaseServiceListener secondListener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(secondListener);
 
-        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, false);
+        IAPManager.getBillingService().productOwnedInternal(TestConstants.TEST_SKU, false);
 
         Mockito.verify(firstListener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
         Mockito.verify(secondListener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
@@ -51,7 +51,7 @@ public class BillingTest {
         products.put(TestConstants.TEST_SKU, TestConstants.TEST_PRODUCT);
         products.put(TestConstants.TEST_SKU_1, TestConstants.TEST_PRODUCT);
 
-        IAPManager.getBillingService().updatePrices(products);
+        IAPManager.getBillingService().updatePricesInternal(products);
 
         Mockito.verify(firstListener, Mockito.times(1)).onPricesUpdated(products);
         Mockito.verify(secondListener, Mockito.times(1)).onPricesUpdated(products);
@@ -69,7 +69,7 @@ public class BillingTest {
 
         IAPManager.removePurchaseListener(firstListener);
 
-        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, false);
+        IAPManager.getBillingService().productOwnedInternal(TestConstants.TEST_SKU, false);
 
         Mockito.verify(firstListener, Mockito.never()).onProductPurchased(Mockito.anyString());
         Mockito.verify(secondListener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
@@ -83,7 +83,7 @@ public class BillingTest {
         PurchaseServiceListener listener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(listener);
 
-        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, false);
+        IAPManager.getBillingService().productOwnedInternal(TestConstants.TEST_SKU, false);
 
         Mockito.verify(listener, Mockito.times(1)).onProductPurchased(TestConstants.TEST_SKU);
     }
@@ -95,7 +95,7 @@ public class BillingTest {
         PurchaseServiceListener listener = Mockito.spy(PurchaseServiceListener.class);
         IAPManager.addPurchaseListener(listener);
 
-        IAPManager.getBillingService().productOwned(TestConstants.TEST_SKU, true);
+        IAPManager.getBillingService().productOwnedInternal(TestConstants.TEST_SKU, true);
 
         Mockito.verify(listener, Mockito.times(1)).onProductRestored(TestConstants.TEST_SKU);
     }
@@ -107,7 +107,7 @@ public class BillingTest {
         SubscriptionServiceListener listener = Mockito.spy(SubscriptionServiceListener.class);
         IAPManager.addSubscriptionListener(listener);
 
-        IAPManager.getBillingService().subscriptionOwned(TestConstants.TEST_SKU, false);
+        IAPManager.getBillingService().subscriptionOwnedInternal(TestConstants.TEST_SKU, false);
 
         Mockito.verify(listener, Mockito.times(1)).onSubscriptionPurchased(TestConstants.TEST_SKU);
     }
@@ -119,7 +119,7 @@ public class BillingTest {
         SubscriptionServiceListener listener = Mockito.spy(SubscriptionServiceListener.class);
         IAPManager.addSubscriptionListener(listener);
 
-        IAPManager.getBillingService().subscriptionOwned(TestConstants.TEST_SKU, true);
+        IAPManager.getBillingService().subscriptionOwnedInternal(TestConstants.TEST_SKU, true);
 
         Mockito.verify(listener, Mockito.times(1)).onSubscriptionRestored(TestConstants.TEST_SKU);
     }
