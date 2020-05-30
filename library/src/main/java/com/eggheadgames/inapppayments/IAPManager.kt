@@ -15,10 +15,8 @@ object IAPManager {
     const val BUILD_TARGET_GOOGLE = 0
     const val BUILD_TARGET_AMAZON = 1
 
-    @JvmStatic
     @SuppressLint("StaticFieldLeak")
-    var billingService: BillingService? = null
-        private set
+    private var mBillingService: BillingService? = null
 
     /**
      * @param context          - application context
@@ -27,59 +25,69 @@ object IAPManager {
      * @param subscriptionKeys - list of sku for subscriptions
      */
     @JvmStatic
-    fun build(context: Context, buildTarget: Int, iapKeys: List<String>?, subscriptionKeys: List<String>?) {
-        val applicationContext = context.applicationContext
-        val contextLocal = applicationContext ?: context
+    fun build(context: Context, buildTarget: Int, iapKeys: List<String>, subscriptionKeys: List<String> = emptyList()) {
+        val contextLocal = context.applicationContext ?: context
 
         //Build-specific initializations
         if (buildTarget == BUILD_TARGET_GOOGLE) {
-            billingService = GoogleBillingService2(contextLocal, iapKeys!!, subscriptionKeys!!)
+            mBillingService = GoogleBillingService2(contextLocal, iapKeys, subscriptionKeys)
+
         } else if (buildTarget == BUILD_TARGET_AMAZON) {
             val keys: MutableList<String> = ArrayList()
-            keys.addAll(iapKeys!!)
-            keys.addAll(subscriptionKeys!!)
-            billingService = AmazonBillingService(contextLocal, keys)
+            keys.addAll(iapKeys)
+            keys.addAll(subscriptionKeys)
+            mBillingService = AmazonBillingService(contextLocal, keys)
         }
     }
 
-    fun init(key: String?, enableLogging: Boolean) {
-        billingService!!.init(key)
-        billingService!!.enableDebugLogging(enableLogging)
+    fun init(key: String? = null, enableLogging: Boolean) {
+        getBillingService().init(key)
+        getBillingService().enableDebugLogging(enableLogging)
     }
 
     @JvmStatic
-    fun addPurchaseListener(purchaseServiceListener: PurchaseServiceListener?) {
-        billingService!!.addPurchaseListener(purchaseServiceListener)
+    fun addPurchaseListener(purchaseServiceListener: PurchaseServiceListener) {
+        getBillingService().addPurchaseListener(purchaseServiceListener)
     }
 
     @JvmStatic
-    fun removePurchaseListener(purchaseServiceListener: PurchaseServiceListener?) {
-        billingService!!.removePurchaseListener(purchaseServiceListener)
+    fun removePurchaseListener(purchaseServiceListener: PurchaseServiceListener) {
+        getBillingService().removePurchaseListener(purchaseServiceListener)
     }
 
     @JvmStatic
-    fun addSubscriptionListener(subscriptionServiceListener: SubscriptionServiceListener?) {
-        billingService!!.addSubscriptionListener(subscriptionServiceListener)
+    fun addSubscriptionListener(subscriptionServiceListener: SubscriptionServiceListener) {
+        getBillingService().addSubscriptionListener(subscriptionServiceListener)
     }
 
-    fun removeSubscriptionListener(subscriptionServiceListener: SubscriptionServiceListener?) {
-        billingService!!.removeSubscriptionListener(subscriptionServiceListener)
+    @JvmStatic
+    fun removeSubscriptionListener(subscriptionServiceListener: SubscriptionServiceListener) {
+        getBillingService().removeSubscriptionListener(subscriptionServiceListener)
     }
 
-    fun buy(activity: Activity?, sku: String?, id: Int) {
-        billingService!!.buy(activity, sku, id)
+    @JvmStatic
+    fun buy(activity: Activity, sku: String, id: Int) {
+        getBillingService().buy(activity, sku, id)
     }
 
-    fun subscribe(activity: Activity?, sku: String?, id: Int) {
-        billingService!!.subscribe(activity, sku, id)
+    @JvmStatic
+    fun subscribe(activity: Activity, sku: String, id: Int) {
+        getBillingService().subscribe(activity, sku, id)
     }
 
-    fun unsubscribe(activity: Activity?, sku: String?, id: Int) {
-        billingService!!.unsubscribe(activity, sku, id)
+    fun unsubscribe(activity: Activity, sku: String, id: Int) {
+        getBillingService().unsubscribe(activity, sku, id)
     }
 
+    @JvmStatic
     fun destroy() {
-        billingService!!.close()
+        getBillingService().close()
     }
 
+    @JvmStatic
+    fun getBillingService(): BillingService {
+        return mBillingService ?: let {
+            throw RuntimeException("Call IAPManager.build to initialize billing service")
+        }
+    }
 }
