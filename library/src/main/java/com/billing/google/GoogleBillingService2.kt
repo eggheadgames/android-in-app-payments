@@ -12,13 +12,13 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
     : BillingService(), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
 
     private lateinit var mBillingClient: BillingClient
-    private lateinit var decodedKey: String
+    private var decodedKey: String? = null
 
     private var enableDebug: Boolean = false
 
     private val skusDetails = mutableMapOf<String, SkuDetails?>()
 
-    override fun init(key: String) {
+    override fun init(key: String?) {
         decodedKey = key
 
         mBillingClient = BillingClient.newBuilder(context).setListener(this).enablePendingPurchases().build()
@@ -165,7 +165,8 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
     }
 
     private fun isSignatureValid(purchase: Purchase): Boolean {
-        return Security.verifyPurchase(decodedKey, purchase.originalJson, purchase.signature)
+        val key = decodedKey ?: return true
+        return Security.verifyPurchase(key, purchase.originalJson, purchase.signature)
     }
 
     /**

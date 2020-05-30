@@ -11,7 +11,7 @@ class AmazonBillingService(val context: Context, private val iapKeys: List<Strin
 
     private var mAmazonBillingListener: AmazonBillingListener? = null
 
-    override fun init(key: String) {
+    override fun init(key: String?) {
         mAmazonBillingListener = AmazonBillingListener(this)
         PurchasingService.registerListener(context, mAmazonBillingListener)
 

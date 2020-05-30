@@ -40,7 +40,12 @@ object IAPManager {
         }
     }
 
-    fun init(key: String? = null, enableLogging: Boolean) {
+    /**
+     * Initialize billing service.
+     *
+     * @param key - key to verify purchase messages. Currently valid only for Google Billing. Leave empty if you want to skip verification
+     */
+    fun init(key: String? = null, enableLogging: Boolean = false) {
         getBillingService().init(key)
         getBillingService().enableDebugLogging(enableLogging)
     }
