@@ -71,17 +71,17 @@ object IAPManager {
     }
 
     @JvmStatic
-    fun buy(activity: Activity, sku: String, id: Int) {
-        getBillingService().buy(activity, sku, id)
+    fun buy(activity: Activity, sku: String) {
+        getBillingService().buy(activity, sku)
     }
 
     @JvmStatic
-    fun subscribe(activity: Activity, sku: String, id: Int) {
-        getBillingService().subscribe(activity, sku, id)
+    fun subscribe(activity: Activity, sku: String) {
+        getBillingService().subscribe(activity, sku)
     }
 
-    fun unsubscribe(activity: Activity, sku: String, id: Int) {
-        getBillingService().unsubscribe(activity, sku, id)
+    fun unsubscribe(activity: Activity, sku: String) {
+        getBillingService().unsubscribe(activity, sku)
     }
 
     @JvmStatic

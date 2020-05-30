@@ -75,11 +75,11 @@ public abstract class BillingService {
 
     public abstract void init(String key);
 
-    public abstract void buy(Activity activity, String sku, int id);
+    public abstract void buy(Activity activity, String sku);
 
-    public abstract void subscribe(Activity activity, String sku, int id);
+    public abstract void subscribe(Activity activity, String sku);
 
-    public abstract void unsubscribe(Activity activity, String sku, int id);
+    public abstract void unsubscribe(Activity activity, String sku);
 
     public abstract void enableDebugLogging(boolean enable);
 

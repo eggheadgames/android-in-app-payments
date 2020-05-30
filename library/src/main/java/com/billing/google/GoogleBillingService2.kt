@@ -51,7 +51,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
         }
     }
 
-    override fun buy(activity: Activity, sku: String, id: Int) {
+    override fun buy(activity: Activity, sku: String) {
         if (!sku.isSkuReady()) {
             log("buy. Google billing service is not ready yet.")
             return
@@ -60,7 +60,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
         launchBillingFlow(activity, sku, BillingClient.SkuType.INAPP)
     }
 
-    override fun subscribe(activity: Activity, sku: String, id: Int) {
+    override fun subscribe(activity: Activity, sku: String) {
         if (!sku.isSkuReady()) {
             log("buy. Google billing service is not ready yet.")
             return
@@ -77,7 +77,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
         }
     }
 
-    override fun unsubscribe(activity: Activity, sku: String, id: Int) {
+    override fun unsubscribe(activity: Activity, sku: String) {
         try {
             val intent = Intent()
             intent.action = Intent.ACTION_VIEW
