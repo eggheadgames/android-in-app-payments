@@ -11,7 +11,7 @@ class AmazonBillingService(val context: Context, private val iapKeys: List<Strin
 
     private var mAmazonBillingListener: AmazonBillingListener? = null
 
-    override fun init(key: String) {
+    override fun init(key: String?) {
         mAmazonBillingListener = AmazonBillingListener(this)
         PurchasingService.registerListener(context, mAmazonBillingListener)
 
@@ -22,15 +22,15 @@ class AmazonBillingService(val context: Context, private val iapKeys: List<Strin
         PurchasingService.getPurchaseUpdates(true)
     }
 
-    override fun buy(activity: Activity, sku: String, id: Int) {
+    override fun buy(activity: Activity, sku: String) {
         PurchasingService.purchase(sku)
     }
 
-    override fun subscribe(activity: Activity, sku: String, id: Int) {
+    override fun subscribe(activity: Activity, sku: String) {
         PurchasingService.purchase(sku)
     }
 
-    override fun unsubscribe(activity: Activity, sku: String, id: Int) {
+    override fun unsubscribe(activity: Activity, sku: String) {
         try {
             val intent = Intent()
             intent.action = Intent.ACTION_VIEW

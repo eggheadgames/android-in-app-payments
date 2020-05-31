@@ -12,13 +12,13 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
     : BillingService(), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
 
     private lateinit var mBillingClient: BillingClient
-    private lateinit var decodedKey: String
+    private var decodedKey: String? = null
 
     private var enableDebug: Boolean = false
 
     private val skusDetails = mutableMapOf<String, SkuDetails?>()
 
-    override fun init(key: String) {
+    override fun init(key: String?) {
         decodedKey = key
 
         mBillingClient = BillingClient.newBuilder(context).setListener(this).enablePendingPurchases().build()
@@ -51,7 +51,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
         }
     }
 
-    override fun buy(activity: Activity, sku: String, id: Int) {
+    override fun buy(activity: Activity, sku: String) {
         if (!sku.isSkuReady()) {
             log("buy. Google billing service is not ready yet.")
             return
@@ -60,7 +60,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
         launchBillingFlow(activity, sku, BillingClient.SkuType.INAPP)
     }
 
-    override fun subscribe(activity: Activity, sku: String, id: Int) {
+    override fun subscribe(activity: Activity, sku: String) {
         if (!sku.isSkuReady()) {
             log("buy. Google billing service is not ready yet.")
             return
@@ -77,7 +77,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
         }
     }
 
-    override fun unsubscribe(activity: Activity, sku: String, id: Int) {
+    override fun unsubscribe(activity: Activity, sku: String) {
         try {
             val intent = Intent()
             intent.action = Intent.ACTION_VIEW
@@ -165,7 +165,8 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
     }
 
     private fun isSignatureValid(purchase: Purchase): Boolean {
-        return Security.verifyPurchase(decodedKey, purchase.originalJson, purchase.signature)
+        val key = decodedKey ?: return true
+        return Security.verifyPurchase(key, purchase.originalJson, purchase.signature)
     }
 
     /**
