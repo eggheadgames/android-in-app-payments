@@ -45,6 +45,7 @@ object IAPManager {
      *
      * @param key - key to verify purchase messages. Currently valid only for Google Billing. Leave empty if you want to skip verification
      */
+    @JvmStatic
     fun init(key: String? = null, enableLogging: Boolean = false) {
         getBillingService().init(key)
         getBillingService().enableDebugLogging(enableLogging)
@@ -80,6 +81,7 @@ object IAPManager {
         getBillingService().subscribe(activity, sku)
     }
 
+    @JvmStatic
     fun unsubscribe(activity: Activity, sku: String) {
         getBillingService().unsubscribe(activity, sku)
     }
