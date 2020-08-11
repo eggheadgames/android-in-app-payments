@@ -1,13 +1,13 @@
-package com.billing.amazon
+package com.billing
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.amazon.device.iap.PurchasingService
-import com.billing.BillingService
 
-class AmazonBillingService(val context: Context, private val iapKeys: List<String>) : BillingService() {
+class BillingService(private val context: Context, private val inAppSkuKeys: List<String>,
+                     private val subscriptionSkuKeys: List<String>) : IBillingService() {
 
     private var mAmazonBillingListener: AmazonBillingListener? = null
 
@@ -15,7 +15,11 @@ class AmazonBillingService(val context: Context, private val iapKeys: List<Strin
         mAmazonBillingListener = AmazonBillingListener(this)
         PurchasingService.registerListener(context, mAmazonBillingListener)
 
-        iapKeys.splitMessages(MAX_SKU_LIMIT).forEach {
+        val keys: MutableList<String> = ArrayList()
+        keys.addAll(inAppSkuKeys)
+        keys.addAll(subscriptionSkuKeys)
+
+        keys.splitMessages(MAX_SKU_LIMIT).forEach {
             PurchasingService.getProductData(it.toSet())
         }
 

@@ -1,11 +1,11 @@
-package com.billing.amazon
+package com.billing
 
 import android.util.Log
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.*
 
-internal class AmazonBillingListener(private val amazonBillingService: AmazonBillingService) : PurchasingListener {
+internal class AmazonBillingListener(private val amazonBillingService: BillingService) : PurchasingListener {
 
     var mDebugLog = false
 

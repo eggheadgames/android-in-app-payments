@@ -1,5 +1,4 @@
-package com.billing.google
-
+package com.billing
 
 import android.text.TextUtils
 import android.util.Base64
