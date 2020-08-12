@@ -73,6 +73,9 @@ staticAnalysis {
     }
 }
 
+// the following code is used to force jitpack to build different builds for each flavour.
+// If you change it, please make sure that it builds correctly, since billing library is used on the all Eggheadgames apps.
+// START JITPACK ARTIFACTS CONFIG
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from android.sourceSets.main.javaDirectories
@@ -99,3 +102,4 @@ if (android.productFlavors.size() > 0) {
         }
     }
 }
+// END JITPACK ARTIFACTS CONFIG
