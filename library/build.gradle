@@ -46,9 +46,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    amazonImplementation files('libs/in-app-purchasing-2.0.76.jar')
+    amazonApi files('libs/in-app-purchasing-2.0.76.jar')
 
-    googleImplementation 'com.android.billingclient:billing:3.0.0'
+    googleApi 'com.android.billingclient:billing:3.0.0'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.24.0'
