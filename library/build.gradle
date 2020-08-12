@@ -23,11 +23,15 @@ android {
         versionName rootProject.ext.general.versionName
     }
 
+    defaultPublishConfig "googleRelease"
+
     flavorDimensions "appstore"
     productFlavors {
         google {
+            dimension "appstore"
         }
         amazon {
+            dimension "appstore"
         }
     }
 
