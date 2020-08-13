@@ -23,6 +23,7 @@ A simple wrapper library that provides sample Google and Amazon in-app purchase 
  * actively maintained by [Egghead Games](http://eggheadgames.com) for their cross-platform mobile/tablet apps ([quality brain puzzles with no ads](https://play.google.com/store/apps/dev?id=8905223606155014113)!)
  * subscriptions for Google Play
  * subscriptions for Amazon
+ * `appstore` flavor support in version 3.0 ensures that Amazon library is not included for Google
  
 ### Not supported:
   * receipt validation (either local or server)
@@ -46,11 +47,26 @@ allprojects {
 }
 ```
 
-Add a dependency to your application related `build.gradle`
+Add an `appstore` flavor to your application related `build.gradle` and the corresponding google and amazon dependencies.
 
 ```gradle
+android {
+    flavorDimensions "appstore"
+    productFlavors {
+        google {
+            dimension "appstore"
+        }
+        amazon {
+            dimension "appstore"
+        }
+…
+}
+
 dependencies {
-    compile 'com.github.eggheadgames:android-in-app-payments:<actual version>'
+    googleImplementation "com.github.eggheadgames:android-in-app-payments:x.y.z:google@aar"
+    googleImplementation 'com.android.billingclient:billing:3.0.0'  // fixme: not sure why this is not automatic
+
+    amazonImplementation "com.github.eggheadgames:android-in-app-payments:x.y.z:amazon@aar"
 }
 ```
 
@@ -59,7 +75,7 @@ dependencies {
 The following code snippet initializes the billing module:
 
 ```java
-    IAPManager.build(context, IAPManager.BUILD_TARGET_GOOGLE, skuList /*can be ignored for Google traget*/);
+    IAPManager.build(context, skuList, ArrayList<>());
     IAPManager.addPurchaseListener(new PurchaseServiceListener() {
             @Override
             public void onPricesUpdated(Map<String, String> map) {
@@ -81,18 +97,18 @@ The following code snippet initializes the billing module:
 
 1. Setup billing module.
 ```
-IAPManager.build(Context context, int buildTarget, List<String> skuList)
+IAPManager.build(Context context, List<String> skuList, List<String> subscriptionSkuList)
 ``` 
 
-`int buildTarget` can be either `IAPManager.BUILD_TARGET_GOOGLE` or `IAPManager.BUILD_TARGET_AMAZON`
-`List<String> skuList` - a list of products to fetch information about (relevant only for `IAPManager.BUILD_TARGET_AMAZON`)
+* `List<String> skuList` - a list of products to fetch information about
+* `List<String> subscriptionSkuList` - a list of subscription products to fetch information about (or empty if none)
 
 2. Request info about available and owned products
 ```
 IAPManager.init(String rot13LicenseKey)
 ```
 
-`String rot13LicenseKey` is relevant only for `IAPManager.BUILD_TARGET_GOOGLE`, and can be ignored for `IAPManager.BUILD_TARGET_AMAZON`. Note that this is the required Google License Key obtained from the app's Google Play console, after applying the [ROT 13 algorithm](https://en.wikipedia.org/wiki/ROT13). 
+`String rot13LicenseKey` is relevant only for the `google` flavor, and can be ignored for `IAPManager.BUILD_TARGET_AMAZON`. Note that this is the required Google License Key obtained from the app's Google Play console, after applying the [ROT 13 algorithm](https://en.wikipedia.org/wiki/ROT13).
 You might choose to store the key as ROT-13 in your app to avoid casual decoding of the strings, however, this is not really secure, so you are advised to follow [Google's advice](https://developer.android.com/training/in-app-billing/preparing-iab-app.html) and then ROT-13 the key before passing it to the API:
 
 > Security Recommendation: Google highly recommends that you do not hard-code the exact public license key string value as provided by Google Play. Instead, construct the whole public license key string at runtime from substrings or retrieve it from an encrypted store before passing it to the constructor. This approach makes it more difficult for malicious third parties to modify the public license key string in your APK file.

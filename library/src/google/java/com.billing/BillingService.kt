@@ -1,4 +1,4 @@
-package com.billing.google
+package com.billing
 
 import android.app.Activity
 import android.content.Context
@@ -6,10 +6,9 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.android.billingclient.api.*
-import com.billing.BillingService
 
-class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List<String>, private val subscriptionSkuKeys: List<String>)
-    : BillingService(), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
+class BillingService(val context: Context, private val inAppSkuKeys: List<String>, private val subscriptionSkuKeys: List<String>)
+    : IBillingService(), PurchasesUpdatedListener, BillingClientStateListener, AcknowledgePurchaseResponseListener {
 
     private lateinit var mBillingClient: BillingClient
     private var decodedKey: String? = null
@@ -71,9 +70,11 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
 
     private fun launchBillingFlow(activity: Activity, sku: String, type: String) {
         sku.toSkuDetails(type) { skuDetails ->
-            val purchaseParams = BillingFlowParams.newBuilder()
-                    .setSkuDetails(skuDetails).build()
-            mBillingClient.launchBillingFlow(activity, purchaseParams)
+            if (skuDetails != null) {
+                val purchaseParams = BillingFlowParams.newBuilder()
+                        .setSkuDetails(skuDetails).build()
+                mBillingClient.launchBillingFlow(activity, purchaseParams)
+            }
         }
     }
 
@@ -99,12 +100,7 @@ class GoogleBillingService2(val context: Context, private val inAppSkuKeys: List
     /**
      * Called by the Billing Library when new purchases are detected.
      */
-    override fun onPurchasesUpdated(billingResult: BillingResult?, purchases: List<Purchase>?) {
-        if (billingResult == null) {
-            Log.wtf(TAG, "onSkuDetailsResponse: null BillingResult")
-            return
-        }
-
+    override fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase>?) {
         val responseCode = billingResult.responseCode
         val debugMessage = billingResult.debugMessage
         log("onPurchasesUpdated: responseCode:$responseCode debugMessage: $debugMessage")

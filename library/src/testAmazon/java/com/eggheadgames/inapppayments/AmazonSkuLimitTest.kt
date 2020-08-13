@@ -1,7 +1,7 @@
 package com.eggheadgames.inapppayments
 
-import com.billing.amazon.AmazonBillingService
-import com.billing.amazon.splitMessages
+import com.billing.BillingService
+import com.billing.splitMessages
 import org.junit.Assert
 import org.junit.Test
 
@@ -14,7 +14,7 @@ class AmazonSkuLimitTest {
             iapKeys.add("sku_$i")
         }
 
-        val splitMessages = iapKeys.splitMessages(AmazonBillingService.MAX_SKU_LIMIT)
+        val splitMessages = iapKeys.splitMessages(BillingService.MAX_SKU_LIMIT)
 
         Assert.assertEquals(3, splitMessages.size)
 
@@ -30,7 +30,7 @@ class AmazonSkuLimitTest {
             iapKeys.add("sku_$i")
         }
 
-        val splitMessages = iapKeys.splitMessages(AmazonBillingService.MAX_SKU_LIMIT)
+        val splitMessages = iapKeys.splitMessages(BillingService.MAX_SKU_LIMIT)
 
         Assert.assertEquals(1, splitMessages.size)
 
@@ -42,7 +42,7 @@ class AmazonSkuLimitTest {
     fun checkSkuListSize_ShouldReturn0() {
         val iapKeys = mutableListOf<String>()
 
-        val splitMessages = iapKeys.splitMessages(AmazonBillingService.MAX_SKU_LIMIT)
+        val splitMessages = iapKeys.splitMessages(BillingService.MAX_SKU_LIMIT)
 
         Assert.assertEquals(0, splitMessages.size)
     }

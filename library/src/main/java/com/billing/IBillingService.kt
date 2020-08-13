@@ -5,7 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.CallSuper
 
-abstract class BillingService {
+abstract class IBillingService {
 
     private val purchaseServiceListeners: MutableList<PurchaseServiceListener> = mutableListOf()
     private val subscriptionServiceListeners: MutableList<SubscriptionServiceListener> = mutableListOf()
