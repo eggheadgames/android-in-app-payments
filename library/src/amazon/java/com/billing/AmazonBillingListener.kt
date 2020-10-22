@@ -75,8 +75,7 @@ internal class AmazonBillingListener(private val amazonBillingService: BillingSe
 
     override fun onPurchaseUpdatesResponse(response: PurchaseUpdatesResponse?) {
         logDebug("onPurchaseUpdatesResponse " + if (response == null) "null" else response.requestStatus)
-        if (response == null) return
-        if (response.requestStatus == PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL) {
+        if (response != null && response.requestStatus == PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL) {
             val receipts = response.receipts.toTypedArray()
             for (receipt in receipts) {
                 if (receipt != null && !receipt.isCanceled) {
@@ -90,6 +89,9 @@ internal class AmazonBillingListener(private val amazonBillingService: BillingSe
                 }
             }
         }
+
+        // callback so we know the inventory query is finished !
+        amazonBillingService.queryInventoryFinished()
     }
 
     private fun logDebug(msg: String) {

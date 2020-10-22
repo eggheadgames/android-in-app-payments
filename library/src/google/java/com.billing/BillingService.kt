@@ -48,6 +48,9 @@ class BillingService(val context: Context, private val inAppSkuKeys: List<String
         if (subsResult != null && subsResult.purchasesList != null) {
             processPurchases(subsResult.purchasesList, isRestore = true)
         }
+
+        // callback so we know the inventory query is finished !
+        queryInventoryFinished()
     }
 
     override fun buy(activity: Activity, sku: String) {

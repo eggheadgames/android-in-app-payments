@@ -10,4 +10,9 @@ interface BillingServiceListener {
      * @param iapKeyPrices - a map with available products
      */
     void onPricesUpdated(Map<String, String> iapKeyPrices);
+
+    /**
+     * Callback will be triggered upon the inventory query is done
+     */
+    void onInventoryQueryFinished();
 }

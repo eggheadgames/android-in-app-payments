@@ -81,6 +81,19 @@ abstract class IBillingService {
         }
     }
 
+    fun queryInventoryFinished() {
+        for (billingServiceListener in purchaseServiceListeners) {
+            findUiHandler().post {
+                billingServiceListener.onInventoryQueryFinished()
+            }
+        }
+        for (billingServiceListener in subscriptionServiceListeners) {
+            findUiHandler().post {
+                billingServiceListener.onInventoryQueryFinished()
+            }
+        }
+    }
+
     abstract fun init(key: String?)
     abstract fun buy(activity: Activity, sku: String)
     abstract fun subscribe(activity: Activity, sku: String)
