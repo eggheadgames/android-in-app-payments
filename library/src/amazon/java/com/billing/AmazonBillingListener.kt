@@ -90,7 +90,7 @@ internal class AmazonBillingListener(private val amazonBillingService: BillingSe
                 }
             }
             if (response.hasMore()) {
-                // if user has more then 100 purchases, then we need to support pagination to retrieve all of them.
+                // if user has more than 100 purchases, then we need to support pagination to retrieve all of them.
                 // described here https://developer.amazon.com/docs/in-app-purchasing/iap-implement-iap.html#4-implement-getpurchaseupdates-method
                 PurchasingService.getPurchaseUpdates(false)
             }
