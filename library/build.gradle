@@ -13,14 +13,14 @@ repositories {
 }
 
 android {
-    compileSdkVersion rootProject.ext.general.compileSdkVersion
-    buildToolsVersion rootProject.ext.general.buildToolsVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    //buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.general.minSdkVersion
-        targetSdkVersion rootProject.ext.general.targetSdkVersion
-        versionCode rootProject.ext.general.versionCode
-        versionName rootProject.ext.general.versionName
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        //versionCode rootProject.ext.versionCode
+        //versionName rootProject.ext.versionName
     }
 
     flavorDimensions "appstore"
@@ -32,13 +32,11 @@ android {
             dimension "appstore"
         }
     }
-
-    lintOptions {
+    lint {
+        disable 'GradleDependency', 'AllowBackup'
         warningsAsErrors true
-        // ok disables
-        disable 'GradleDependency'
-        disable 'AllowBackup'
     }
+
 }
 
 dependencies {
@@ -46,14 +44,15 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    amazonApi files('libs/in-app-purchasing-2.0.76.jar')
-
-    googleApi 'com.android.billingclient:billing:3.0.0'
+    //amazonApi files('libs/in-app-purchasing-2.0.76.jar')
+    amazonApi 'com.amazon.device:amazon-appstore-sdk:3.0.2'
+    googleApi 'com.android.billingclient:billing:3.0.2'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.24.0'
 }
 
+/*
 staticAnalysis {
     penalty {
         maxErrors = 0
@@ -72,6 +71,7 @@ staticAnalysis {
         excludeFilter rootProject.file('library/findbugs_excludes.xml')
     }
 }
+*/
 
 // the following code is used to force jitpack to build different builds for each flavour.
 // If you change it, please make sure that it builds correctly, since billing library is used on the all Eggheadgames apps.

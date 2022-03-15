@@ -103,6 +103,6 @@ internal class AmazonBillingListener(private val amazonBillingService: BillingSe
     }
 
     init {
-        logDebug("IS_SANDBOX_MODE:" + PurchasingService.IS_SANDBOX_MODE)
+        //logDebug("IS_SANDBOX_MODE:" + PurchasingService.IS_SANDBOX_MODE)
     }
 }
