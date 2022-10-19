@@ -40,17 +40,30 @@ class BillingService(val context: Context, private val inAppSkuKeys: List<String
      * New purchases will be provided to the PurchasesUpdatedListener.
      */
     private fun queryPurchases() {
-        val inappResult: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP)
-        if (inappResult != null && inappResult.purchasesList != null) {
-            processPurchases(inappResult.purchasesList, isRestore = true)
-        }
-        val subsResult: Purchase.PurchasesResult? = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS)
-        if (subsResult != null && subsResult.purchasesList != null) {
-            processPurchases(subsResult.purchasesList, isRestore = true)
-        }
+        mBillingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, object : PurchasesResponseListener {
+            override fun onQueryPurchasesResponse(inappResult: BillingResult, purchasesList: MutableList<Purchase>) {
+                if (inappResult.isOk()) {
+                    processPurchases(purchasesList, isRestore = true)
+
+                    // callback so we know the inventory query is finished !
+                    queryInventoryFinished(BillingClient.SkuType.INAPP)
+                }
+            }
+        })
+
+        mBillingClient.queryPurchasesAsync(BillingClient.SkuType.SUBS, object : PurchasesResponseListener {
+            override fun onQueryPurchasesResponse(subsResult: BillingResult, purchasesList: MutableList<Purchase>) {
+                if (subsResult.isOk()) {
+                    processPurchases(purchasesList, isRestore = true)
+
+                    // callback so we know the inventory query is finished !
+                    queryInventoryFinished(BillingClient.SkuType.SUBS)
+                }
+            }
+        })
 
         // callback so we know the inventory query is finished !
-        queryInventoryFinished()
+        //queryInventoryFinished() // useless here now since Billing library v4 ?
     }
 
     override fun buy(activity: Activity, sku: String) {
@@ -133,20 +146,20 @@ class BillingService(val context: Context, private val inAppSkuKeys: List<String
         if (purchasesList != null) {
             log("processPurchases: " + purchasesList.size + " purchase(s)")
             purchases@ for (purchase in purchasesList) {
-                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && purchase.sku.isSkuReady()) {
+                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && purchase.skus[0].isSkuReady()) {
                     if (!isSignatureValid(purchase)) {
                         log("processPurchases. Signature is not valid for: $purchase")
                         continue@purchases
                     }
 
                     // Grant entitlement to the user.
-                    val skuDetails = skusDetails[purchase.sku]
+                    val skuDetails = skusDetails[purchase.skus[0]]
                     when (skuDetails?.type) {
                         BillingClient.SkuType.INAPP -> {
-                            productOwned(purchase.sku, isRestore)
+                            productOwned(purchase.skus[0], isRestore)
                         }
                         BillingClient.SkuType.SUBS -> {
-                            subscriptionOwned(purchase.sku, isRestore)
+                            subscriptionOwned(purchase.skus[0], isRestore)
                         }
                     }
 
@@ -158,7 +171,7 @@ class BillingService(val context: Context, private val inAppSkuKeys: List<String
                     }
                 } else {
                     Log.e(TAG, "processPurchases failed. purchase: $purchase " +
-                            "purchaseState: ${purchase.purchaseState} isSkuReady: ${purchase.sku.isSkuReady()}")
+                            "purchaseState: ${purchase.purchaseState} isSkuReady: ${purchase.skus[0].isSkuReady()}")
                 }
             }
         } else {
