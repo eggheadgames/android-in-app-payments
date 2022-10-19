@@ -1,17 +1,12 @@
 buildscript {
     ext.kotlin_version = '1.7.0'
     ext {
-        app = [
-                versionCode: 22,
-                versionName: "3.0.0"
-        ]
-
-        general = [
-                compileSdkVersion: 32,
-                minSdkVersion    : 19,
-                targetSdkVersion : 32,
-                buildToolsVersion: "30.0.2"
-        ]
+        versionCode = 23
+        versionName = "3.0.1"
+        compileSdkVersion = 32
+        minSdkVersion = 19
+        targetSdkVersion = 32
+        buildToolsVersion = "30.0.2"
     }
 
     repositories {
