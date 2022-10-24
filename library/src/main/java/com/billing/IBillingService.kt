@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.CallSuper
-import com.android.billingclient.api.BillingClient
 
 abstract class IBillingService {
 
@@ -82,15 +81,15 @@ abstract class IBillingService {
         }
     }
 
-    fun queryInventoryFinished(skuType: String) {
-        if (skuType == BillingClient.SkuType.INAPP) {
+    fun queryInventoryFinished(skuType: String?) {
+        if (skuType == null || skuType == "inapp") {
             for (billingServiceListener in purchaseServiceListeners) {
                 findUiHandler().post {
                     billingServiceListener.onInventoryQueryFinished()
                 }
             }
         }
-        else if (skuType == BillingClient.SkuType.SUBS) {
+        if (skuType == null || skuType == "subs") {
             for (billingServiceListener in subscriptionServiceListeners) {
                 findUiHandler().post {
                     billingServiceListener.onInventoryQueryFinished()

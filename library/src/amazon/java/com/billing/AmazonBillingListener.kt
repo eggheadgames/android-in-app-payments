@@ -91,7 +91,7 @@ internal class AmazonBillingListener(private val amazonBillingService: BillingSe
         }
 
         // callback so we know the inventory query is finished !
-        amazonBillingService.queryInventoryFinished()
+        amazonBillingService.queryInventoryFinished(null)
     }
 
     private fun logDebug(msg: String) {
