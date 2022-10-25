@@ -22,6 +22,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url "https://jitpack.io" }
         mavenCentral()
         google()
     }
@@ -30,5 +31,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-apply plugin: 'maven-publish'
