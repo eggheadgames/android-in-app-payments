@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'com.github.eggheadgames'
-version = project.versionName
+//version = project.versionName
 
 repositories {
     mavenCentral()
