@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23 //rootProject.ext.versionCode
-        versionName "3.0.1" //rootProject.ext.versionName
+        //versionCode 23 //rootProject.ext.versionCode
+        //versionName "3.0.1" //rootProject.ext.versionName
     }
 
     flavorDimensions "appstore"
@@ -46,7 +46,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    //amazonApi files('libs/in-app-purchasing-2.0.76.jar')
     amazonApi 'com.amazon.device:amazon-appstore-sdk:3.0.2'
     googleApi 'com.android.billingclient:billing:5.0.0'
 
@@ -54,15 +53,13 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.24.0'
 }
 
+// the following code is used to force jitpack to build different builds for each flavour.
 afterEvaluate {
     publishing {
         publications {
-
             android.libraryVariants.all { variant ->
                 if (!variant.name.toLowerCase().contains("debug")) {
                     "$variant.name"(MavenPublication) {
-                        //groupId = group
-                        //version = Config.libraryVersion
                         artifactId "$project.name"
                         artifact source: sourcesJar, classifier: variant.flavorName
                         from components."$variant.name"
@@ -71,6 +68,11 @@ afterEvaluate {
             }
         }
     }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.javaDirectories
 }
 
 /*
@@ -93,8 +95,3 @@ staticAnalysis {
     }
 }
 */
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.javaDirectories
-}
