@@ -3,7 +3,8 @@ plugins {
     //id 'com.novoda.static-analysis' version '1.2'
     //id "com.github.spotbugs" version '3.0.0'
     id 'kotlin-android'
-    //id 'kotlin-android-extensions'
+    //id 'maven-publish'
+    id 'kotlin-android-extensions'
 }
 
 group = 'com.github.eggheadgames'
