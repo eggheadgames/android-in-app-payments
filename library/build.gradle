@@ -62,9 +62,9 @@ afterEvaluate {
                 if (!variant.name.toLowerCase().contains("debug")) {
                     "$variant.name"(MavenPublication) {
                         //groupId = group
-                        //artifactId = version
                         //version = Config.libraryVersion
                         artifactId "$project.name"
+                        artifact source: sourcesJar, classifier: variant.flavorName
                         from components."$variant.name"
                     }
                 }
@@ -94,33 +94,7 @@ staticAnalysis {
 }
 */
 
-// the following code is used to force jitpack to build different builds for each flavour.
-// If you change it, please make sure that it builds correctly, since billing library is used on the all Eggheadgames apps.
-// START JITPACK ARTIFACTS CONFIG
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from android.sourceSets.main.javaDirectories
 }
-
-artifacts {
-    archives sourcesJar
-}
-
-if (android.productFlavors.size() > 0) {
-    android.libraryVariants.all { variant ->
-        if (variant.name.toLowerCase().contains("debug")) {
-            return
-        }
-
-        def bundleTask = tasks["bundle${variant.name.capitalize()}Aar"]
-
-        artifacts {
-            archives(bundleTask.archivePath) {
-                classifier variant.flavorName
-                builtBy bundleTask
-                name = project.name
-            }
-        }
-    }
-}
-// END JITPACK ARTIFACTS CONFIG
