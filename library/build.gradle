@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'com.novoda.static-analysis' version '1.2'
+    //id 'com.novoda.static-analysis' version '1.2'
     id "com.github.spotbugs" version '3.0.0'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
@@ -32,6 +32,11 @@ android {
             dimension "appstore"
         }
     }
+    // default build flavour
+    defaultPublishConfig "googleRelease"
+    // true to publish all flavour artifacts
+    publishNonDefault true
+
     lint {
         disable 'GradleDependency', 'AllowBackup'
         warningsAsErrors true

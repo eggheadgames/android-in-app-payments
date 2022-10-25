@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.7.0'
+    ext.kotlin_version = '1.7.10'
     ext {
         versionCode = 23
         versionName = "3.0.1"
@@ -10,7 +10,7 @@ buildscript {
     }
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 
@@ -22,7 +22,7 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 }
