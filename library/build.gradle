@@ -45,6 +45,8 @@ android {
         multipleVariants("library") {
             includeBuildTypeValues("release")
             includeFlavorDimensionAndValues("appstore", "google", "amazon")
+            //withSourcesJar()
+            //withJavadocJar()
         }
     }
 }
