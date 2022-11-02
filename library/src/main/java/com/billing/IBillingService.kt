@@ -81,6 +81,23 @@ abstract class IBillingService {
         }
     }
 
+    fun queryInventoryFinished(skuType: String?) {
+        if (skuType == null || skuType == "inapp") {
+            for (billingServiceListener in purchaseServiceListeners) {
+                findUiHandler().post {
+                    billingServiceListener.onInventoryQueryFinished()
+                }
+            }
+        }
+        if (skuType == null || skuType == "subs") {
+            for (billingServiceListener in subscriptionServiceListeners) {
+                findUiHandler().post {
+                    billingServiceListener.onInventoryQueryFinished()
+                }
+            }
+        }
+    }
+
     abstract fun init(key: String?)
     abstract fun buy(activity: Activity, sku: String)
     abstract fun subscribe(activity: Activity, sku: String)
